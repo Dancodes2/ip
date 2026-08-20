@@ -105,12 +105,47 @@ public class SlotBot {
             }
 
             // Store every other command as a task in the order it was entered.
-            tasks.add(new Todo(userInput));
+            Task newTask = parseTask(userInput);
+            tasks.add(newTask);
             System.out.println(separator);
             System.out.println("Got it. I've made room for this task:");
-            System.out.println("  " + userInput);
+            System.out.println("  " + newTask);
             System.out.println(separator);
             System.out.println();
         }
+    }
+
+    // Helper to determine task type
+    private static Task parseTask(String userInput) {
+        String[] arguments = userInput.trim().split("\\s+", 2);
+        String command = arguments[0];
+
+        if (command.equals("todo") && arguments.length == 2) {
+            return new Todo(arguments[1]);
+        }
+
+        if (command.equals("deadline") && arguments.length == 2) {
+            String[] sentenceDeadline = arguments[1].split(" /by ", 2);
+            if (sentenceDeadline.length == 2) {
+                String description = sentenceDeadline[0];
+                String by = sentenceDeadline[1];
+                return new Deadline(description, by);
+            }
+        }
+
+        if (command.equals("event") && arguments.length == 2) {
+            String[] sentenceEvent = arguments[1].split(" /from ", 2);
+            if (sentenceEvent.length == 2) {
+                String description = sentenceEvent[0];
+                String[] datesEvent = sentenceEvent[1].split(" /to ", 2);
+                if (datesEvent.length == 2) {
+                    String from = datesEvent[0];
+                    String to = datesEvent[1];
+                    return new Event(description, from, to);
+                }
+            }
+        }
+
+        return new Todo(userInput);
     }
 }
