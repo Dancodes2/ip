@@ -9,7 +9,7 @@ public class SlotBot {
     /**
      * Starts SlotBot and processes user commands until the user enters bye.
      *
-     * @param args command-line arguments, which are not used
+     * @param args Command-line arguments, which are not used.
      */
 
     public static void main(String[] args) {
@@ -29,11 +29,11 @@ public class SlotBot {
 
         Scanner scanner = new Scanner(System.in);
 
-        // Keep reading commands until the user ends the conversation or input is exhausted.
+        /** Keeps reading commands until the user ends the conversation or input is exhausted. */
         while (scanner.hasNextLine()) {
             String userInput = scanner.nextLine();
 
-            // Print the ending message and stop when the user enters the exit command.
+            /** Prints the ending message and stops when the user enters the exit command. */
             if (userInput.equals("bye")) {
                 System.out.print("""
                         %s
@@ -41,8 +41,7 @@ public class SlotBot {
                 break;
             }
 
-            // Handles commands that update a task's completion status.
-            // Splits input to command and task number by spaces.
+            /** Splits input into a command and task number by spaces. */
             String[] commandParts = userInput.trim().split("\\s+", 2);
             String command = commandParts[0];
             if (command.equals("mark") || command.equals("unmark")) {
@@ -56,7 +55,7 @@ public class SlotBot {
                     continue;
                 }
 
-                // Convert the task number to an integer, invalid text throws this exception.
+                /** Converts the task number; invalid text throws this exception. */
                 try {
                     int taskNumber = Integer.parseInt(commandParts[1]);
                     if (taskNumber < 1 || taskNumber > tasks.size()) {
@@ -71,7 +70,7 @@ public class SlotBot {
 
                     Task selectedTask = tasks.get(taskNumber - 1);
 
-                    // Mark or unmark based on command.
+                    /** Marks or unmarks the selected task based on the command. */
                     boolean shouldMark = command.equals("mark");
                     if (shouldMark) {
                         selectedTask.markDone();
@@ -100,7 +99,7 @@ public class SlotBot {
                 continue;
             }
 
-            // Display all stored tasks when the list command is entered.
+            /** Displays all stored tasks when the list command is entered. */
             if (userInput.equals("list")) {
                 System.out.print("""
                         %s
@@ -116,8 +115,7 @@ public class SlotBot {
                 continue;
             }
 
-            // Store every other command as a task in the order it was entered.
-            // Catch and throw errors.
+            /** Stores valid task commands and catches parsing errors. */
             try {
                 Task newTask = parseTask(userInput);
                 tasks.add(newTask);
@@ -140,10 +138,12 @@ public class SlotBot {
         }
     }
 
-    // Helper to determine task type.
     /**
-     * Helper to determine task type.
-     * throws SlotBotException if the command or its arguments are invalid
+     * Determines the task type from a user command.
+     *
+     * @param userInput The command entered by the user.
+     * @return The task created from the valid command.
+     * @throws SlotBotException If the command or its arguments are invalid.
      */
     private static Task parseTask(String userInput) throws SlotBotException {
         String[] arguments = userInput.trim().split("\\s+", 2);

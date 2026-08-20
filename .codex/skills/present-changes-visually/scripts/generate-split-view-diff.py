@@ -210,9 +210,7 @@ def file_lines(repo: Path, point: dict, path: str) -> tuple[list[str] | None, st
             return None, "binary file"
     if text == "":
         return [], ""
-    if text.endswith("\n"):
-        text = text[:-1]
-    return text.split("\n"), ""
+    return text.splitlines(), ""
 
 
 # --- diffing -----------------------------------------------------------------

@@ -161,6 +161,8 @@ static public void run()
   - `Adds ...`
   - `Creates ...`
   - `Sends ...`
+- Keep Javadoc concise and include `@param`, `@return`, and `@throws` tags where applicable.
+- Tag descriptions should start with a capital letter and end with a period.
 - Avoid comments that simply translate obvious Java statements into English.
 - Indent comments consistently with the surrounding code.
 
