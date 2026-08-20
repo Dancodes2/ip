@@ -117,51 +117,93 @@ public class SlotBot {
             }
 
             // Store every other command as a task in the order it was entered.
-            Task newTask = parseTask(userInput);
-            tasks.add(newTask);
-            System.out.print("""
-                    %s
-                    Got it. I've added this task:
-                      %s
-                    Now you have %d tasks in the list.
-                    %s
+            // Catch and throw errors.
+            try {
+                Task newTask = parseTask(userInput);
+                tasks.add(newTask);
+                System.out.print("""
+                        %s
+                        Got it. I've added this task:
+                          %s
+                        Now you have %d tasks in the list.
+                        %s
 
-                    """.formatted(separator, newTask, tasks.size(), separator));
+                        """.formatted(separator, newTask, tasks.size(), separator));
+            } catch (SlotBotException e) {
+                System.out.print("""
+                        %s
+                        %s
+                        %s
+
+                        """.formatted(separator, e.getMessage(), separator));
+            }
         }
     }
 
     // Helper to determine task type.
-    // Todo is the fallback task if non of the tasks are triggered.
-    private static Task parseTask(String userInput) {
+    /**
+     * Helper to determine task type.
+     * throws SlotBotException if the command or its arguments are invalid
+     */
+    private static Task parseTask(String userInput) throws SlotBotException {
         String[] arguments = userInput.trim().split("\\s+", 2);
         String command = arguments[0];
 
-        if (command.equals("todo") && arguments.length == 2) {
+        if (command.equals("todo")) {
+            if (arguments.length < 2 || arguments[1].isBlank()) {
+                throw new SlotBotException("The description of a todo cannot be empty.\n"
+                        + "Use: todo DESCRIPTION");
+            }
             return new Todo(arguments[1]);
         }
 
-        if (command.equals("deadline") && arguments.length == 2) {
+        if (command.equals("deadline")) {
+            if (arguments.length < 2 || arguments[1].isBlank()) {
+                throw new SlotBotException("The description of a deadline cannot be empty.\n"
+                        + "Use: deadline DESCRIPTION /by DATE");
+            }
+
             String[] sentenceDeadline = arguments[1].split(" /by ", 2);
-            if (sentenceDeadline.length == 2) {
-                String description = sentenceDeadline[0];
-                String by = sentenceDeadline[1];
-                return new Deadline(description, by);
+            if (sentenceDeadline.length < 2
+                    || sentenceDeadline[0].isBlank()
+                    || sentenceDeadline[1].isBlank()) {
+                throw new SlotBotException("Use: deadline DESCRIPTION /by DATE");
             }
+
+            String description = sentenceDeadline[0];
+            String by = sentenceDeadline[1];
+            return new Deadline(description, by);
         }
 
-        if (command.equals("event") && arguments.length == 2) {
+        if (command.equals("event")) {
+            if (arguments.length < 2 || arguments[1].isBlank()) {
+                throw new SlotBotException("The description of an event cannot be empty.\n"
+                        + "Use: event DESCRIPTION /from START /to END");
+            }
+
             String[] sentenceEvent = arguments[1].split(" /from ", 2);
-            if (sentenceEvent.length == 2) {
-                String description = sentenceEvent[0];
-                String[] datesEvent = sentenceEvent[1].split(" /to ", 2);
-                if (datesEvent.length == 2) {
-                    String from = datesEvent[0];
-                    String to = datesEvent[1];
-                    return new Event(description, from, to);
-                }
+            if (sentenceEvent.length < 2
+                    || sentenceEvent[0].isBlank()
+                    || sentenceEvent[1].isBlank()) {
+                throw new SlotBotException("Use: event DESCRIPTION /from START /to END");
             }
+
+            String description = sentenceEvent[0];
+            String[] datesEvent = sentenceEvent[1].split(" /to ", 2);
+            if (datesEvent.length < 2
+                    || datesEvent[0].isBlank()
+                    || datesEvent[1].isBlank()) {
+                throw new SlotBotException("Use: event DESCRIPTION /from START /to END");
+            }
+
+            String from = datesEvent[0];
+            String to = datesEvent[1];
+            return new Event(description, from, to);
         }
 
-        return new Todo(userInput);
+        throw new SlotBotException("I don't recognise that command.\n"
+                + "Try: todo DESCRIPTION, deadline DESCRIPTION /by DATE,\n"
+                + "event DESCRIPTION /from START /to END, list, mark NUMBER,\n"
+                + "unmark NUMBER, or bye.");
     }
 }

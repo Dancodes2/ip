@@ -4,14 +4,22 @@ Run the regression case with the project-local `test-ui` skill. The complete
 expected output is stored in `text-ui-test/EXPECTED.TXT` and the commands are
 stored in `text-ui-test/input.txt`.
 
-## Case 1: Add each task type
+## Case 1: Add each task type and handle basic errors
 
-Aim: Verify that todo, deadline, and event commands create the correct task
-types, show the task count, and handle invalid mark inputs safely.
+Aim: Verify that invalid todo, deadline, event, and unknown commands show
+specific errors without adding tasks, while valid task commands create the
+correct task types, show the task count, and handle invalid mark inputs safely.
 
 Inputs:
 
 ```text
+todo
+blah
+deadline
+deadline return book
+event
+event project meeting
+event project meeting /from Mon 2pm
 todo borrow book
 deadline return book /by Sunday
 event project meeting /from Mon 2pm /to 4pm

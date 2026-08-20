@@ -2,6 +2,40 @@ Hello! I'm SlotBot.
 Let's keep your time and tasks in order.
 ____________________________________________________________
 ____________________________________________________________
+The description of a todo cannot be empty.
+Use: todo DESCRIPTION
+____________________________________________________________
+
+____________________________________________________________
+I don't recognise that command.
+Try: todo DESCRIPTION, deadline DESCRIPTION /by DATE,
+event DESCRIPTION /from START /to END, list, mark NUMBER,
+unmark NUMBER, or bye.
+____________________________________________________________
+
+____________________________________________________________
+The description of a deadline cannot be empty.
+Use: deadline DESCRIPTION /by DATE
+____________________________________________________________
+
+____________________________________________________________
+Use: deadline DESCRIPTION /by DATE
+____________________________________________________________
+
+____________________________________________________________
+The description of an event cannot be empty.
+Use: event DESCRIPTION /from START /to END
+____________________________________________________________
+
+____________________________________________________________
+Use: event DESCRIPTION /from START /to END
+____________________________________________________________
+
+____________________________________________________________
+Use: event DESCRIPTION /from START /to END
+____________________________________________________________
+
+____________________________________________________________
 Got it. I've added this task:
   [T][ ] borrow book
 Now you have 1 tasks in the list.
