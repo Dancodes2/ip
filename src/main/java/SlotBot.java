@@ -131,6 +131,7 @@ public class SlotBot {
     }
 
     // Helper to determine task type.
+    // Todo is the fallback task if non of the tasks are triggered.
     private static Task parseTask(String userInput) {
         String[] arguments = userInput.trim().split("\\s+", 2);
         String command = arguments[0];
