@@ -1,3 +1,5 @@
+import java.util.Scanner;
+
 /**
  * The main entry point for SlotBot.
  */
@@ -8,16 +10,32 @@ public class SlotBot {
                 + " \\___ \\| |/ _ \\| __||  _ \\ / _ \\| __|\n"
                 + "  ___) | | (_) | |_ | |_) | (_) | |_ \n"
                 + " |____/|_|\\___/ \\__||____/ \\___/ \\__|\n";
-        System.out.println(banner);
-        String message = """
-                ____________________________________________________________
+        String separator = "____________________________________________________________";
+        String greeting = """
                 Hello! I'm SlotBot.
                 What can I do for you?
                 ____________________________________________________________
+                """;
+        String ending = """
                 Bye. Hope to see you again soon!
                 ____________________________________________________________
                 """;
 
-        System.out.println(message);
+        System.out.print(banner);
+        System.out.print(greeting);
+
+        Scanner scanner = new Scanner(System.in);
+
+        while (scanner.hasNextLine()) {
+            String userInput = scanner.nextLine();
+
+            if (userInput.equals("bye")) {
+                System.out.print(ending);
+                break;
+            }
+
+            System.out.println(userInput);
+            System.out.println(separator);
+        }
     }
 }
