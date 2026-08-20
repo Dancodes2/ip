@@ -11,6 +11,7 @@ public class SlotBot {
      *
      * @param args command-line arguments, which are not used
      */
+
     public static void main(String[] args) {
         String separator = "____________________________________________________________";
         String greeting = """
@@ -51,6 +52,7 @@ public class SlotBot {
                     System.out.println();
                     continue;
                 }
+
                 // Convert the task number to an integer, invalid text throws this exception.
                 try {
                     int taskNumber = Integer.parseInt(commandParts[1]);
