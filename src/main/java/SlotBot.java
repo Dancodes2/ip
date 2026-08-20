@@ -24,12 +24,16 @@ public class SlotBot {
             String userInput = scanner.nextLine();
 
             if (userInput.equals("bye")) {
+                System.out.println(separator);
                 System.out.print(ending);
                 break;
             }
 
+            System.out.println(separator);
             System.out.println(userInput);
             System.out.println(separator);
+            System.out.println();
+
         }
     }
 }
