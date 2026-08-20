@@ -39,10 +39,61 @@ public class SlotBot {
                 break;
             }
 
+            // Handles commands that update a task's completion status.
+            // Splits input to command and task number by spaces.
+            String[] commandParts = userInput.trim().split("\\s+", 2);
+            String command = commandParts[0];
+            if (command.equals("mark") || command.equals("unmark")) {
+                if (commandParts.length < 2) {
+                    System.out.println(separator);
+                    System.out.println("Please provide a task number.");
+                    System.out.println(separator);
+                    System.out.println();
+                    continue;
+                }
+                // Convert the task number to an integer, invalid text throws this exception.
+                try {
+                    int taskNumber = Integer.parseInt(commandParts[1]);
+                    if (taskNumber < 1 || taskNumber > tasks.size()) {
+                        System.out.println(separator);
+                        System.out.println("That task number does not exist.");
+                        System.out.println(separator);
+                        System.out.println();
+                        continue;
+                    }
+
+                    Task selectedTask = tasks.get(taskNumber - 1);
+
+                    // Mark or unmark based on command.
+                    boolean shouldMark = command.equals("mark");
+                    if (shouldMark) {
+                        selectedTask.markDone();
+                    } else {
+                        selectedTask.markUndone();
+                    }
+
+                    System.out.println(separator);
+                    if (shouldMark) {
+                        System.out.println("Nice! We got one.");
+                    } else {
+                        System.out.println("OK, I've marked this task as not done yet:");
+                    }
+                    System.out.println("  " + selectedTask);
+                    System.out.println(separator);
+                    System.out.println();
+                } catch (NumberFormatException e) {
+                    System.out.println(separator);
+                    System.out.println("Please enter a whole number for the task number.");
+                    System.out.println(separator);
+                    System.out.println();
+                }
+                continue;
+            }
+
             // Display all stored tasks when the list command is entered.
             if (userInput.equals("list")) {
                 System.out.println(separator);
-                System.out.println("Here are the tasks in your list:");
+                System.out.println("Here's what's on your schedule:");
                 for (int i = 0; i < tasks.size(); i++) {
                     System.out.println((i + 1) + ". " + tasks.get(i));
                 }
@@ -54,7 +105,8 @@ public class SlotBot {
             // Store every other command as a task in the order it was entered.
             tasks.add(new Task(userInput));
             System.out.println(separator);
-            System.out.println("added: " + userInput);
+            System.out.println("Got it. I've made room for this task:");
+            System.out.println("  " + userInput);
             System.out.println(separator);
             System.out.println();
         }
