@@ -8,8 +8,8 @@ stored in `text-ui-test/input.txt`.
 
 Aim: Verify that invalid todo, deadline, event, and unknown commands show
 specific errors without adding tasks, while valid task commands create the
-correct task types, show the task count, delete a task and renumber the list,
-and handle invalid mark inputs safely.
+correct task types, show the task count, handle invalid delete inputs safely,
+delete a task and renumber the list, and handle invalid mark inputs safely.
 
 Inputs:
 
@@ -26,6 +26,9 @@ deadline return book /by Sunday
 event project meeting /from Mon 2pm /to 4pm
 todo join sports club
 list
+delete
+delete abc
+delete 99
 delete 2
 list
 mark 2

@@ -101,26 +101,23 @@ public class SlotBot {
 
             // Removes the selected task from the list.
             if (command.equals("delete")) {
-                if (commandParts.length < 2) {
-                    System.out.print("""
-                            %s
-                            Please provide a task number.
-                            %s
-
-                            """.formatted(separator, separator));
-                    continue;
-                }
-
                 try {
-                    int taskNumber = Integer.parseInt(commandParts[1]);
-                    if (taskNumber < 1 || taskNumber > tasks.size()) {
-                        System.out.print("""
-                                %s
-                                That task number does not exist.
-                                %s
+                    if (commandParts.length < 2) {
+                        throw new SlotBotException("Please provide a task number.\n"
+                                + "Use: delete [NUMBER]");
+                    }
 
-                                """.formatted(separator, separator));
-                        continue;
+                    int taskNumber;
+                    try {
+                        taskNumber = Integer.parseInt(commandParts[1]);
+                    } catch (NumberFormatException e) {
+                        throw new SlotBotException("Please enter a whole number for the task number.\n"
+                                + "Use: delete [NUMBER]");
+                    }
+
+                    if (taskNumber < 1 || taskNumber > tasks.size()) {
+                        throw new SlotBotException("That task number does not exist.\n"
+                                + "Use: delete [NUMBER]");
                     }
 
                     Task removedTask = tasks.remove(taskNumber - 1);
@@ -132,13 +129,13 @@ public class SlotBot {
                             %s
 
                             """.formatted(separator, removedTask, tasks.size(), separator));
-                } catch (NumberFormatException e) {
+                } catch (SlotBotException e) {
                     System.out.print("""
                             %s
-                            Please enter a whole number for the task number.
+                            %s
                             %s
 
-                            """.formatted(separator, separator));
+                            """.formatted(separator, e.getMessage(), separator));
                 }
                 continue;
             }
@@ -247,7 +244,7 @@ public class SlotBot {
 
         throw new SlotBotException("I don't recognise that command.\n"
                 + "Try: todo DESCRIPTION, deadline DESCRIPTION /by DATE,\n"
-                + "event DESCRIPTION /from START /to END, list, mark NUMBER,\n"
-                + "unmark NUMBER, or bye.");
+                + "event DESCRIPTION /from START /to END, list, mark [NUMBER],\n"
+                + "unmark [NUMBER], or bye.");
     }
 }

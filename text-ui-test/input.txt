@@ -10,6 +10,9 @@ deadline return book /by Sunday
 event project meeting /from Mon 2pm /to 4pm
 todo join sports club
 list
+delete
+delete abc
+delete 99
 delete 2
 list
 mark 2
