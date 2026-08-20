@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -20,6 +22,7 @@ public class SlotBot {
                 All done. See you next time!
                 ____________________________________________________________
                 """;
+        List<String> tasks = new ArrayList<>();
 
         System.out.print(greeting);
 
@@ -36,12 +39,23 @@ public class SlotBot {
                 break;
             }
 
-            // Echo each non-exit command so the user can see what SlotBot received.
+            // Display all stored tasks when the list command is entered.
+            if (userInput.equals("list")) {
+                System.out.println(separator);
+                for (int i = 0; i < tasks.size(); i++) {
+                    System.out.println((i + 1) + ". " + tasks.get(i));
+                }
+                System.out.println(separator);
+                System.out.println();
+                continue;
+            }
+
+            // Store every other command as a task in the order it was entered.
+            tasks.add(userInput);
             System.out.println(separator);
-            System.out.println(userInput);
+            System.out.println("added: " + userInput);
             System.out.println(separator);
             System.out.println();
-
         }
     }
 }
