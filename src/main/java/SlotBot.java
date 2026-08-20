@@ -13,11 +13,11 @@ public class SlotBot {
         String separator = "____________________________________________________________";
         String greeting = """
                 Hello! I'm SlotBot.
-                What can I do for you?
+                Let's keep your time and tasks in order.
                 ____________________________________________________________
                 """;
         String ending = """
-                Bye. Hope to see you again soon!
+                All done. See you next time!
                 ____________________________________________________________
                 """;
 
