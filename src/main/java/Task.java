@@ -1,7 +1,6 @@
 /**
  * Represents a task that can be marked as done or not done.
  */
-
 public class Task {
     private final String description;
     private boolean isDone;

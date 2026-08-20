@@ -105,7 +105,7 @@ public class SlotBot {
             }
 
             // Store every other command as a task in the order it was entered.
-            tasks.add(new Task(userInput));
+            tasks.add(new Todo(userInput));
             System.out.println(separator);
             System.out.println("Got it. I've made room for this task:");
             System.out.println("  " + userInput);
