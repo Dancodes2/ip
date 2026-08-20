@@ -33,24 +33,26 @@ public class SlotBot {
         while (scanner.hasNextLine()) {
             String userInput = scanner.nextLine();
 
+            // Splits input into a command and task number by spaces.
+            String[] commandParts = userInput.trim().split("\\s+", 2);
+            String command = commandParts[0];
+            CommandType commandType = CommandType.fromText(command);
+
             // Prints the ending message and stops when the user enters the exit command.
-            if (userInput.equals("bye")) {
+            if (commandType == CommandType.BYE && userInput.equals("bye")) {
                 System.out.print("""
                         %s
                         %s""".formatted(separator, ending));
                 break;
             }
 
-            // Splits input into a command and task number by spaces.
-            String[] commandParts = userInput.trim().split("\\s+", 2);
-            String command = commandParts[0];
-            if (command.equals("mark") || command.equals("unmark")) {
+            if (commandType == CommandType.MARK || commandType == CommandType.UNMARK) {
                 try {
                     int taskIndex = parseTaskNumber(command, commandParts, tasks.size());
                     Task selectedTask = tasks.get(taskIndex);
 
                     // Marks or unmarks the selected task based on the command.
-                    boolean shouldMark = command.equals("mark");
+                    boolean shouldMark = commandType == CommandType.MARK;
                     if (shouldMark) {
                         selectedTask.markDone();
                     } else {
@@ -79,7 +81,7 @@ public class SlotBot {
             }
 
             // Removes the selected task from the list.
-            if (command.equals("delete")) {
+            if (commandType == CommandType.DELETE) {
                 try {
                     int taskIndex = parseTaskNumber(command, commandParts, tasks.size());
                     Task removedTask = tasks.remove(taskIndex);
@@ -103,7 +105,7 @@ public class SlotBot {
             }
 
             // Displays all stored tasks when the list command is entered.
-            if (userInput.equals("list")) {
+            if (commandType == CommandType.LIST && userInput.equals("list")) {
                 System.out.print("""
                         %s
                         Here are the tasks in your list:
@@ -120,7 +122,7 @@ public class SlotBot {
 
             // Stores valid task commands and catches parsing errors.
             try {
-                Task newTask = parseTask(userInput);
+                Task newTask = parseTask(userInput, commandType);
                 tasks.add(newTask);
                 System.out.print("""
                         %s
@@ -180,14 +182,15 @@ public class SlotBot {
      * Determines the task type from a user command.
      *
      * @param userInput The command entered by the user.
+     * @param commandType Type of the entered command.
      * @return The task created from the valid command.
      * @throws SlotBotException If the command or its arguments are invalid.
      */
-    private static Task parseTask(String userInput) throws SlotBotException {
+    private static Task parseTask(String userInput, CommandType commandType) throws SlotBotException {
         String[] arguments = userInput.trim().split("\\s+", 2);
-        String command = arguments[0];
 
-        if (command.equals("todo")) {
+        switch (commandType) {
+        case TODO: {
             if (arguments.length < 2 || arguments[1].isBlank()) {
                 throw new SlotBotException("The description of a todo cannot be empty.\n"
                         + "Use: todo DESCRIPTION");
@@ -195,7 +198,7 @@ public class SlotBot {
             return new Todo(arguments[1]);
         }
 
-        if (command.equals("deadline")) {
+        case DEADLINE: {
             if (arguments.length < 2 || arguments[1].isBlank()) {
                 throw new SlotBotException("The description of a deadline cannot be empty.\n"
                         + "Use: deadline DESCRIPTION /by DATE");
@@ -213,7 +216,7 @@ public class SlotBot {
             return new Deadline(description, by);
         }
 
-        if (command.equals("event")) {
+        case EVENT: {
             if (arguments.length < 2 || arguments[1].isBlank()) {
                 throw new SlotBotException("The description of an event cannot be empty.\n"
                         + "Use: event DESCRIPTION /from START /to END");
@@ -239,9 +242,11 @@ public class SlotBot {
             return new Event(description, from, to);
         }
 
-        throw new SlotBotException("I don't recognise that command.\n"
-                + "Try: todo DESCRIPTION, deadline DESCRIPTION /by DATE,\n"
-                + "event DESCRIPTION /from START /to END, list, mark [NUMBER],\n"
-                + "unmark [NUMBER], or bye.");
+        default:
+            throw new SlotBotException("I don't recognise that command.\n"
+                    + "Try: todo DESCRIPTION, deadline DESCRIPTION /by DATE,\n"
+                    + "event DESCRIPTION /from START /to END, list, mark [NUMBER],\n"
+                    + "unmark [NUMBER], or bye.");
+        }
     }
 }
