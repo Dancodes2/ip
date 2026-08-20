@@ -9,5 +9,15 @@ public class SlotBot {
                 + "  ___) | | (_) | |_ | |_) | (_) | |_ \n"
                 + " |____/|_|\\___/ \\__||____/ \\___/ \\__|\n";
         System.out.println(banner);
+        String message = """
+                ____________________________________________________________
+                Hello! I'm SlotBot.
+                What can I do for you?
+                ____________________________________________________________
+                Bye. Hope to see you again soon!
+                ____________________________________________________________
+                """;
+
+        System.out.println(message);
     }
 }
