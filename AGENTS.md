@@ -385,3 +385,24 @@ When the work appears to complete an iP increment, check:
 8. The increment tag has also been pushed.
 
 If helping only with implementation, do not automatically perform the Git operations. Remind the user when the increment reaches the commit/tag/push stage.
+
+## UI testing workflow
+
+After every Java code update, invoke the project-local `test-ui` skill. Update
+`test/ui-test-plan.md` first when the user-visible behavior changes.
+
+## Regression test maintenance
+
+Use the following workflow when updating the text UI:
+
+1. Edit the Java code.
+2. Update `text-ui-test/input.txt` only when adding or changing a test
+   scenario.
+3. Run `text-ui-test/runtest.bat`.
+4. Inspect `text-ui-test/ACTUAL.TXT`.
+5. If the output is unexpected, fix the code and rerun the test.
+6. If the output is correct and intentional, copy `ACTUAL.TXT` to
+   `EXPECTED.TXT`.
+7. Rerun the test and confirm that it passes.
+
+Never replace `EXPECTED.TXT` without reviewing `ACTUAL.TXT` first.
