@@ -267,3 +267,121 @@ For example:
 ```text
 1234-ui-freeze-error
 ```
+
+## CS2103T iP workflow conventions
+
+The individual project (iP) is developed through course-defined increments such as:
+
+```text
+Level-0
+Level-1
+Level-2
+Level-3
+Level-4
+Level-5
+Level-6
+A-Enums
+```
+
+Other increment IDs may be introduced later by the course.
+
+### Increment order
+
+- Implement course increments in the order specified by the iP instructions.
+- Do not skip ahead to later increments unless the user explicitly requests it.
+- Keep changes scoped to the requirements of the current increment.
+- Avoid implementing future increment requirements prematurely.
+
+### Committing increments
+
+Commit code at important development points.
+
+At minimum, create a commit after completing each increment.
+
+When helping decide whether to commit:
+
+- Prefer logical, meaningful commits.
+- Intermediate commits within an increment are allowed and encouraged when they represent useful checkpoints.
+- The final commit for an increment should leave that increment fully implemented.
+- Do not include generated `.class` files or other files that should not be revision-controlled.
+
+General CS2103T commit-message conventions still apply.
+
+### Tagging completed increments
+
+After an increment is fully completed, tag the commit that completes the increment using the **exact increment ID** specified by the course.
+
+Examples:
+
+```bash
+git tag Level-0
+git tag Level-2
+git tag A-Enums
+git tag A-Classes
+```
+
+The increment ID is a Git tag, not the commit message.
+
+Do not invent variations such as:
+
+```text
+level-2
+Level2
+level2
+AEnums
+```
+
+when the required ID is:
+
+```text
+Level-2
+A-Enums
+```
+
+Use lightweight tags unless the user explicitly requests an annotated tag.
+
+Before tagging, verify that:
+
+1. The increment requirements are complete.
+2. The relevant changes have been committed.
+3. The tag will point to the commit that completes the increment.
+
+### Pushing completed increments
+
+After completing and tagging an increment, push both the code and the tag to the user's fork.
+
+A normal push does not necessarily push Git tags.
+
+Typical workflow:
+
+```bash
+git push
+git push origin Level-2
+```
+
+Replace `Level-2` with the exact increment ID being completed.
+
+When appropriate, verify the local state before pushing using commands such as:
+
+```bash
+git status
+git log --oneline --decorate -n 5
+git tag
+```
+
+Do not commit, tag, or push unless the user explicitly asks.
+
+### Increment completion checklist
+
+When the work appears to complete an iP increment, check:
+
+1. The requirements for the current increment are implemented.
+2. The application builds or runs as expected.
+3. Relevant tests or checks have been run where applicable.
+4. `git status` does not show unintended files.
+5. The completed work has been committed.
+6. The completing commit is tagged with the exact increment ID.
+7. The commit has been pushed to the user's fork.
+8. The increment tag has also been pushed.
+
+If helping only with implementation, do not automatically perform the Git operations. Remind the user when the increment reaches the commit/tag/push stage.
