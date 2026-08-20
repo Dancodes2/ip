@@ -5,11 +5,6 @@ import java.util.Scanner;
  */
 public class SlotBot {
     public static void main(String[] args) {
-        String banner = "  ____  _       _   ____        _   \n"
-                + " / ___|| | ___ | |_ | __ )  ___ | |_ \n"
-                + " \\___ \\| |/ _ \\| __||  _ \\ / _ \\| __|\n"
-                + "  ___) | | (_) | |_ | |_) | (_) | |_ \n"
-                + " |____/|_|\\___/ \\__||____/ \\___/ \\__|\n";
         String separator = "____________________________________________________________";
         String greeting = """
                 Hello! I'm SlotBot.
@@ -21,7 +16,6 @@ public class SlotBot {
                 ____________________________________________________________
                 """;
 
-        System.out.print(banner);
         System.out.print(greeting);
 
         Scanner scanner = new Scanner(System.in);
