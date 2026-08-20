@@ -45,30 +45,9 @@ public class SlotBot {
             String[] commandParts = userInput.trim().split("\\s+", 2);
             String command = commandParts[0];
             if (command.equals("mark") || command.equals("unmark")) {
-                if (commandParts.length < 2) {
-                    System.out.print("""
-                            %s
-                            Please provide a task number.
-                            %s
-
-                            """.formatted(separator, separator));
-                    continue;
-                }
-
-                // Converts the task number; invalid text throws this exception.
                 try {
-                    int taskNumber = Integer.parseInt(commandParts[1]);
-                    if (taskNumber < 1 || taskNumber > tasks.size()) {
-                        System.out.print("""
-                                %s
-                                That task number does not exist.
-                                %s
-
-                                """.formatted(separator, separator));
-                        continue;
-                    }
-
-                    Task selectedTask = tasks.get(taskNumber - 1);
+                    int taskIndex = parseTaskNumber(command, commandParts, tasks.size());
+                    Task selectedTask = tasks.get(taskIndex);
 
                     // Marks or unmarks the selected task based on the command.
                     boolean shouldMark = command.equals("mark");
@@ -88,13 +67,13 @@ public class SlotBot {
                             %s
 
                             """.formatted(separator, markMessage, selectedTask, separator));
-                } catch (NumberFormatException e) {
+                } catch (SlotBotException e) {
                     System.out.print("""
                             %s
-                            Please enter a whole number for the task number.
+                            %s
                             %s
 
-                            """.formatted(separator, separator));
+                            """.formatted(separator, e.getMessage(), separator));
                 }
                 continue;
             }
@@ -102,25 +81,8 @@ public class SlotBot {
             // Removes the selected task from the list.
             if (command.equals("delete")) {
                 try {
-                    if (commandParts.length < 2) {
-                        throw new SlotBotException("Please provide a task number.\n"
-                                + "Use: delete [NUMBER]");
-                    }
-
-                    int taskNumber;
-                    try {
-                        taskNumber = Integer.parseInt(commandParts[1]);
-                    } catch (NumberFormatException e) {
-                        throw new SlotBotException("Please enter a whole number for the task number.\n"
-                                + "Use: delete [NUMBER]");
-                    }
-
-                    if (taskNumber < 1 || taskNumber > tasks.size()) {
-                        throw new SlotBotException("That task number does not exist.\n"
-                                + "Use: delete [NUMBER]");
-                    }
-
-                    Task removedTask = tasks.remove(taskNumber - 1);
+                    int taskIndex = parseTaskNumber(command, commandParts, tasks.size());
+                    Task removedTask = tasks.remove(taskIndex);
                     System.out.print("""
                             %s
                             Noted. I've removed this task:
@@ -177,6 +139,41 @@ public class SlotBot {
                         """.formatted(separator, e.getMessage(), separator));
             }
         }
+    }
+
+    /**
+     * Parses a task number and returns its zero-based index.
+     *
+     * @param command Command needing a task number.
+     * @param commandParts Command and task number parts.
+     * @param taskCount Number of tasks in the list.
+     * @return Zero-based index of the selected task.
+     * @throws SlotBotException If the task number is missing, invalid, or out of range.
+     */
+    private static int parseTaskNumber(
+            String command,
+            String[] commandParts,
+            int taskCount
+    ) throws SlotBotException {
+        if (commandParts.length < 2) {
+            throw new SlotBotException("Please provide a task number.\n"
+                    + "Use: " + command + " [NUMBER]");
+        }
+
+        int taskNumber;
+        try {
+            taskNumber = Integer.parseInt(commandParts[1]);
+        } catch (NumberFormatException e) {
+            throw new SlotBotException("Please enter a whole number for the task number.\n"
+                    + "Use: " + command + " [NUMBER]");
+        }
+
+        if (taskNumber < 1 || taskNumber > taskCount) {
+            throw new SlotBotException("That task number does not exist.\n"
+                    + "Use: " + command + " [NUMBER]");
+        }
+
+        return taskNumber - 1;
     }
 
     /**

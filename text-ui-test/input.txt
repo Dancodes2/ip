@@ -15,8 +15,11 @@ delete abc
 delete 99
 delete 2
 list
+mark
+unmark
 mark 2
 unmark 2
 mark abc
+unmark abc
 mark 99
 bye
