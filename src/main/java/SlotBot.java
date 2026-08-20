@@ -22,7 +22,7 @@ public class SlotBot {
                 All done. See you next time!
                 ____________________________________________________________
                 """;
-        List<String> tasks = new ArrayList<>();
+        List<Task> tasks = new ArrayList<>();
 
         System.out.print(greeting);
 
@@ -42,6 +42,7 @@ public class SlotBot {
             // Display all stored tasks when the list command is entered.
             if (userInput.equals("list")) {
                 System.out.println(separator);
+                System.out.println("Here are the tasks in your list:");
                 for (int i = 0; i < tasks.size(); i++) {
                     System.out.println((i + 1) + ". " + tasks.get(i));
                 }
@@ -51,7 +52,7 @@ public class SlotBot {
             }
 
             // Store every other command as a task in the order it was entered.
-            tasks.add(userInput);
+            tasks.add(new Task(userInput));
             System.out.println(separator);
             System.out.println("added: " + userInput);
             System.out.println(separator);
