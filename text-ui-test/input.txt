@@ -8,6 +8,9 @@ event project meeting /from Mon 2pm
 todo borrow book
 deadline return book /by Sunday
 event project meeting /from Mon 2pm /to 4pm
+todo join sports club
+list
+delete 2
 list
 mark 2
 unmark 2

@@ -29,11 +29,11 @@ public class SlotBot {
 
         Scanner scanner = new Scanner(System.in);
 
-        /** Keeps reading commands until the user ends the conversation or input is exhausted. */
+        // Keeps reading commands until the user ends the conversation or input is exhausted.
         while (scanner.hasNextLine()) {
             String userInput = scanner.nextLine();
 
-            /** Prints the ending message and stops when the user enters the exit command. */
+            // Prints the ending message and stops when the user enters the exit command.
             if (userInput.equals("bye")) {
                 System.out.print("""
                         %s
@@ -41,7 +41,7 @@ public class SlotBot {
                 break;
             }
 
-            /** Splits input into a command and task number by spaces. */
+            // Splits input into a command and task number by spaces.
             String[] commandParts = userInput.trim().split("\\s+", 2);
             String command = commandParts[0];
             if (command.equals("mark") || command.equals("unmark")) {
@@ -55,7 +55,7 @@ public class SlotBot {
                     continue;
                 }
 
-                /** Converts the task number; invalid text throws this exception. */
+                // Converts the task number; invalid text throws this exception.
                 try {
                     int taskNumber = Integer.parseInt(commandParts[1]);
                     if (taskNumber < 1 || taskNumber > tasks.size()) {
@@ -70,7 +70,7 @@ public class SlotBot {
 
                     Task selectedTask = tasks.get(taskNumber - 1);
 
-                    /** Marks or unmarks the selected task based on the command. */
+                    // Marks or unmarks the selected task based on the command.
                     boolean shouldMark = command.equals("mark");
                     if (shouldMark) {
                         selectedTask.markDone();
@@ -99,7 +99,51 @@ public class SlotBot {
                 continue;
             }
 
-            /** Displays all stored tasks when the list command is entered. */
+            // Removes the selected task from the list.
+            if (command.equals("delete")) {
+                if (commandParts.length < 2) {
+                    System.out.print("""
+                            %s
+                            Please provide a task number.
+                            %s
+
+                            """.formatted(separator, separator));
+                    continue;
+                }
+
+                try {
+                    int taskNumber = Integer.parseInt(commandParts[1]);
+                    if (taskNumber < 1 || taskNumber > tasks.size()) {
+                        System.out.print("""
+                                %s
+                                That task number does not exist.
+                                %s
+
+                                """.formatted(separator, separator));
+                        continue;
+                    }
+
+                    Task removedTask = tasks.remove(taskNumber - 1);
+                    System.out.print("""
+                            %s
+                            Noted. I've removed this task:
+                              %s
+                            Now you have %d tasks in the list.
+                            %s
+
+                            """.formatted(separator, removedTask, tasks.size(), separator));
+                } catch (NumberFormatException e) {
+                    System.out.print("""
+                            %s
+                            Please enter a whole number for the task number.
+                            %s
+
+                            """.formatted(separator, separator));
+                }
+                continue;
+            }
+
+            // Displays all stored tasks when the list command is entered.
             if (userInput.equals("list")) {
                 System.out.print("""
                         %s
@@ -115,7 +159,7 @@ public class SlotBot {
                 continue;
             }
 
-            /** Stores valid task commands and catches parsing errors. */
+            // Stores valid task commands and catches parsing errors.
             try {
                 Task newTask = parseTask(userInput);
                 tasks.add(newTask);
