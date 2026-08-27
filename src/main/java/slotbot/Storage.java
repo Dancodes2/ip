@@ -1,3 +1,5 @@
+package slotbot;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -8,6 +10,12 @@ import java.time.format.ResolverStyle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import slotbot.task.Deadline;
+import slotbot.task.Event;
+import slotbot.task.Task;
+import slotbot.task.TaskList;
+import slotbot.task.Todo;
 
 /**
  * Loads and saves SlotBot tasks in a text file.

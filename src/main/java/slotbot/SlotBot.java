@@ -1,4 +1,9 @@
+package slotbot;
+
 import java.nio.file.Path;
+
+import slotbot.task.Task;
+import slotbot.task.TaskList;
 
 /**
  * The main entry point for SlotBot.

@@ -1,4 +1,9 @@
+package slotbot;
+
 import java.util.Scanner;
+
+import slotbot.task.Task;
+import slotbot.task.TaskList;
 
 /**
  * Handles console interactions with the user.
