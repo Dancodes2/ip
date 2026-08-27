@@ -15,6 +15,7 @@ mark, unmark, and delete. Verify that leading or trailing whitespace around
 
 Deadline inputs use the Level 8 `yyyy-MM-dd` format and display as `MMM dd yyyy`.
 Event inputs use `yyyy-MM-dd HH:mm` and display as `MMM dd yyyy HH:mm`.
+Invalid deadline and event date-times should be rejected without adding tasks.
 
 The regression runner uses a fresh temporary working directory, so the case
 also verifies that a missing save file does not prevent first launch and that

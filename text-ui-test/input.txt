@@ -7,7 +7,9 @@ event project meeting
 event project meeting /from Mon 2pm
 todo borrow book
 deadline return book /by 2019-10-15
+deadline invalid date /by 2019-02-30
 event project meeting /from 2019-10-15 14:00 /to 2019-10-15 16:00
+event invalid time /from 2019-02-30 14:00 /to 2019-02-30 16:00
 todo join sports club
 list
  list
