@@ -49,7 +49,7 @@ ____________________________________________________________
 
 ____________________________________________________________
 Got it. I've added this task:
-  [E][ ] project meeting (from: Mon 2pm to: 4pm)
+  [E][ ] project meeting (from: Oct 15 2019 14:00 to: Oct 15 2019 16:00)
 Now you have 3 tasks in the list.
 ____________________________________________________________
 
@@ -63,7 +63,7 @@ ____________________________________________________________
 Here are the tasks in your list:
 1. [T][ ] borrow book
 2. [D][ ] return book (by: Oct 15 2019)
-3. [E][ ] project meeting (from: Mon 2pm to: 4pm)
+3. [E][ ] project meeting (from: Oct 15 2019 14:00 to: Oct 15 2019 16:00)
 4. [T][ ] join sports club
 ____________________________________________________________
 
@@ -71,7 +71,7 @@ ____________________________________________________________
 Here are the tasks in your list:
 1. [T][ ] borrow book
 2. [D][ ] return book (by: Oct 15 2019)
-3. [E][ ] project meeting (from: Mon 2pm to: 4pm)
+3. [E][ ] project meeting (from: Oct 15 2019 14:00 to: Oct 15 2019 16:00)
 4. [T][ ] join sports club
 ____________________________________________________________
 
@@ -99,7 +99,7 @@ ____________________________________________________________
 ____________________________________________________________
 Here are the tasks in your list:
 1. [T][ ] borrow book
-2. [E][ ] project meeting (from: Mon 2pm to: 4pm)
+2. [E][ ] project meeting (from: Oct 15 2019 14:00 to: Oct 15 2019 16:00)
 3. [T][ ] join sports club
 ____________________________________________________________
 
@@ -115,12 +115,12 @@ ____________________________________________________________
 
 ____________________________________________________________
 Nice! We got one.
-  [E][X] project meeting (from: Mon 2pm to: 4pm)
+  [E][X] project meeting (from: Oct 15 2019 14:00 to: Oct 15 2019 16:00)
 ____________________________________________________________
 
 ____________________________________________________________
 OK, I've marked this task as not done yet:
-  [E][ ] project meeting (from: Mon 2pm to: 4pm)
+  [E][ ] project meeting (from: Oct 15 2019 14:00 to: Oct 15 2019 16:00)
 ____________________________________________________________
 
 ____________________________________________________________

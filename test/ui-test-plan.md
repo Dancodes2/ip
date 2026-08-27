@@ -14,6 +14,7 @@ mark, unmark, and delete. Verify that leading or trailing whitespace around
 `list` and `bye` is handled the same as the plain command.
 
 Deadline inputs use the Level 8 `yyyy-MM-dd` format and display as `MMM dd yyyy`.
+Event inputs use `yyyy-MM-dd HH:mm` and display as `MMM dd yyyy HH:mm`.
 
 The regression runner uses a fresh temporary working directory, so the case
 also verifies that a missing save file does not prevent first launch and that
@@ -31,7 +32,7 @@ event project meeting
 event project meeting /from Mon 2pm
 todo borrow book
 deadline return book /by 2019-10-15
-event project meeting /from Mon 2pm /to 4pm
+event project meeting /from 2019-10-15 14:00 /to 2019-10-15 16:00
 todo join sports club
 list
 delete

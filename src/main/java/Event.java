@@ -1,7 +1,13 @@
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
+
 /** Represents a task that starts and ends at specified times. */
 public class Event extends Task {
-    private final String from;
-    private final String to;
+    private static final DateTimeFormatter DISPLAY_FORMATTER =
+            DateTimeFormatter.ofPattern("MMM dd yyyy HH:mm", Locale.ENGLISH);
+    private final LocalDateTime from;
+    private final LocalDateTime to;
 
     /**
      * Creates an event.
@@ -10,7 +16,7 @@ public class Event extends Task {
      * @param from Event start time.
      * @param to Event end time.
      */
-    public Event(String description, String from, String to) {
+    public Event(String description, LocalDateTime from, LocalDateTime to) {
         super(description);
         this.from = from;
         this.to = to;
@@ -21,7 +27,7 @@ public class Event extends Task {
      *
      * @return Event start time.
      */
-    public String getFrom() {
+    public LocalDateTime getFrom() {
         return from;
     }
 
@@ -30,7 +36,7 @@ public class Event extends Task {
      *
      * @return Event end time.
      */
-    public String getTo() {
+    public LocalDateTime getTo() {
         return to;
     }
 
@@ -42,6 +48,7 @@ public class Event extends Task {
     @Override
     public String toString() {
         return "[E]" + super.toString()
-                + String.format(" (from: %s to: %s)", from, to);
+                + String.format(" (from: %s to: %s)",
+                from.format(DISPLAY_FORMATTER), to.format(DISPLAY_FORMATTER));
     }
 }
