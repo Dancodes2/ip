@@ -1,0 +1,115 @@
+package slotbot;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import slotbot.task.Deadline;
+import slotbot.task.Event;
+import slotbot.task.Task;
+import slotbot.task.Todo;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class StorageTest {
+
+    @Test
+    public void loadTasks_missingSaveFile_returnsEmptyList(@TempDir Path tempDirectory) {
+        Path saveFilePath = tempDirectory.resolve("data").resolve("slotbot.txt");
+        Storage storage = new Storage(saveFilePath, new Ui());
+
+        List<Task> tasks = storage.loadTasks();
+
+        assertTrue(tasks.isEmpty());
+    }
+
+    @Test
+    public void loadTasks_validTaskTypesAndStates_preservesOrderAndFields(
+            @TempDir Path tempDirectory) throws IOException {
+        Path saveFilePath = writeSaveFile(tempDirectory,
+                "T | 1 | finish tutorial",
+                "D | 0 | submit iP | 2026-09-01",
+                "E | 1 | project meeting | 2026-09-02 14:00 | 2026-09-02 16:00");
+        Storage storage = new Storage(saveFilePath, new Ui());
+
+        List<Task> tasks = storage.loadTasks();
+
+        assertEquals(3, tasks.size());
+        assertEquals(Todo.class, tasks.get(0).getClass());
+        assertEquals("finish tutorial", tasks.get(0).getDescription());
+        assertTrue(tasks.get(0).getIsDone());
+
+        assertEquals(Deadline.class, tasks.get(1).getClass());
+        Deadline deadline = (Deadline) tasks.get(1);
+        assertEquals("submit iP", deadline.getDescription());
+        assertFalse(deadline.getIsDone());
+        assertEquals(LocalDate.of(2026, 9, 1), deadline.getDate());
+
+        assertEquals(Event.class, tasks.get(2).getClass());
+        Event event = (Event) tasks.get(2);
+        assertEquals("project meeting", event.getDescription());
+        assertTrue(event.getIsDone());
+        assertEquals(LocalDateTime.of(2026, 9, 2, 14, 0), event.getFrom());
+        assertEquals(LocalDateTime.of(2026, 9, 2, 16, 0), event.getTo());
+    }
+
+    @Test
+    public void loadTasks_malformedRecordBetweenValidRecords_skipsMalformedRecord(
+            @TempDir Path tempDirectory) throws IOException {
+        Path saveFilePath = writeSaveFile(tempDirectory,
+                "T | 0 | first task",
+                "broken | record",
+                "D | 1 | later task | 2026-09-03");
+        Storage storage = new Storage(saveFilePath, new Ui());
+
+        List<Task> tasks = storage.loadTasks();
+
+        assertEquals(2, tasks.size());
+        assertEquals("first task", tasks.get(0).getDescription());
+        assertEquals("later task", tasks.get(1).getDescription());
+        assertTrue(tasks.get(1).getIsDone());
+    }
+
+    @Test
+    public void loadTasks_corruptedDeadlineDate_skipsDeadlineAndLoadsLaterRecord(
+            @TempDir Path tempDirectory) throws IOException {
+        Path saveFilePath = writeSaveFile(tempDirectory,
+                "D | 0 | impossible deadline | 2019-02-30",
+                "T | 0 | later task");
+        Storage storage = new Storage(saveFilePath, new Ui());
+
+        List<Task> tasks = storage.loadTasks();
+
+        assertEquals(1, tasks.size());
+        assertEquals("later task", tasks.get(0).getDescription());
+    }
+
+    @Test
+    public void loadTasks_corruptedEventDateTime_skipsEventAndLoadsLaterRecord(
+            @TempDir Path tempDirectory) throws IOException {
+        Path saveFilePath = writeSaveFile(tempDirectory,
+                "E | 0 | invalid event | 2019-10-15 25:00 | 2019-10-15 16:00",
+                "T | 0 | later task");
+        Storage storage = new Storage(saveFilePath, new Ui());
+
+        List<Task> tasks = storage.loadTasks();
+
+        assertEquals(1, tasks.size());
+        assertEquals("later task", tasks.get(0).getDescription());
+    }
+
+    private Path writeSaveFile(Path tempDirectory, String... taskLines) throws IOException {
+        Path saveFilePath = tempDirectory.resolve("data").resolve("slotbot.txt");
+        Files.createDirectories(saveFilePath.getParent());
+        Files.write(saveFilePath, List.of(taskLines));
+        return saveFilePath;
+    }
+}
