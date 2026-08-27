@@ -38,7 +38,7 @@ public class SlotBot {
                 """;
         System.out.print(greeting);
 
-        List<Task> tasks = loadTasks();
+        TaskList tasks = new TaskList(loadTasks());
 
         Scanner scanner = new Scanner(System.in);
 
@@ -96,7 +96,7 @@ public class SlotBot {
             if (commandType == CommandType.DELETE) {
                 try {
                     int taskIndex = Parser.parseTaskNumber(userInput, tasks.size());
-                    Task removedTask = tasks.remove(taskIndex);
+                    Task removedTask = tasks.delete(taskIndex);
                     saveTasks(tasks);
                     System.out.print("""
                             %s
@@ -162,12 +162,12 @@ public class SlotBot {
      *
      * @param tasks Tasks to save.
      */
-    private static void saveTasks(List<Task> tasks) {
+    private static void saveTasks(TaskList tasks) {
         try {
             Files.createDirectories(SAVE_FILE_PATH.getParent());
 
             List<String> taskLines = new ArrayList<>();
-            for (Task task : tasks) {
+            for (Task task : tasks.getTasks()) {
                 taskLines.add(formatTaskForSaving(task));
             }
             Files.write(SAVE_FILE_PATH, taskLines);
