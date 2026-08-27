@@ -1,8 +1,14 @@
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
+import java.time.format.DateTimeFormatter;
+import java.time.format.ResolverStyle;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Scanner;
 
 /**
@@ -10,6 +16,9 @@ import java.util.Scanner;
  */
 public class SlotBot {
     private static final Path SAVE_FILE_PATH = Path.of("data", "slotbot.txt");
+    private static final DateTimeFormatter EVENT_DATE_TIME_FORMATTER =
+            DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm", Locale.ENGLISH)
+                    .withResolverStyle(ResolverStyle.STRICT);
 
     /**
      * Starts SlotBot and processes user commands until the user enters bye.
@@ -229,7 +238,7 @@ public class SlotBot {
         for (int i = 0; i < taskLines.size(); i++) {
             try {
                 tasks.add(parseSavedTask(taskLines.get(i)));
-            } catch (IllegalArgumentException e) {
+            } catch (RuntimeException e) {
                 System.out.println("Warning: Ignoring invalid task data on line " + (i + 1) + ".");
             }
         }
@@ -256,11 +265,14 @@ public class SlotBot {
         }
         case "D" -> {
             validateTaskFields(fields, 4);
-            yield new Deadline(fields[2], fields[3]);
+            yield new Deadline(fields[2], LocalDate.parse(fields[3]));
         }
         case "E" -> {
             validateTaskFields(fields, 5);
-            yield new Event(fields[2], fields[3], fields[4]);
+            yield new Event(
+                    fields[2],
+                    LocalDateTime.parse(fields[3], EVENT_DATE_TIME_FORMATTER),
+                    LocalDateTime.parse(fields[4], EVENT_DATE_TIME_FORMATTER));
         }
         default -> throw new IllegalArgumentException("Unknown task type.");
         };
@@ -307,7 +319,10 @@ public class SlotBot {
         }
         if (task instanceof Event event) {
             return "E | %s | %s | %s | %s".formatted(
-                    completionStatus, event.getDescription(), event.getFrom(), event.getTo());
+                    completionStatus,
+                    event.getDescription(),
+                    event.getFrom().format(EVENT_DATE_TIME_FORMATTER),
+                    event.getTo().format(EVENT_DATE_TIME_FORMATTER));
         }
 
         return "T | %s | %s".formatted(completionStatus, task.getDescription());
@@ -347,8 +362,13 @@ public class SlotBot {
             }
 
             String description = sentenceDeadline[0];
-            String by = sentenceDeadline[1];
-            return new Deadline(description, by);
+            try {
+                LocalDate by = LocalDate.parse(sentenceDeadline[1]);
+                return new Deadline(description, by);
+            } catch (DateTimeParseException e) {
+                throw new SlotBotException("The deadline date must use yyyy-MM-dd.\n"
+                        + "Use: deadline DESCRIPTION /by yyyy-MM-dd");
+            }
         }
 
         case EVENT: {
@@ -372,9 +392,14 @@ public class SlotBot {
                 throw new SlotBotException("Use: event DESCRIPTION /from START /to END");
             }
 
-            String from = datesEvent[0];
-            String to = datesEvent[1];
-            return new Event(description, from, to);
+            try {
+                LocalDateTime from = LocalDateTime.parse(datesEvent[0], EVENT_DATE_TIME_FORMATTER);
+                LocalDateTime to = LocalDateTime.parse(datesEvent[1], EVENT_DATE_TIME_FORMATTER);
+                return new Event(description, from, to);
+            } catch (DateTimeParseException e) {
+                throw new SlotBotException("The event times must use yyyy-MM-dd HH:mm.\n"
+                        + "Use: event DESCRIPTION /from yyyy-MM-dd HH:mm /to yyyy-MM-dd HH:mm");
+            }
         }
 
         default:
