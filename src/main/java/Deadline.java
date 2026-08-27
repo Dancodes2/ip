@@ -14,6 +14,15 @@ public class Deadline extends Task {
     }
 
     /**
+     * Returns this deadline's date.
+     *
+     * @return Deadline date.
+     */
+    public String getDate() {
+        return date;
+    }
+
+    /**
      * Returns the deadline's display text.
      *
      * @return Deadline type, status, description, and date.

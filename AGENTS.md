@@ -297,6 +297,7 @@ Other increment IDs may be introduced later by the course.
 ### Committing increments
 
 Commit code at important development points.
+Allow user to review all changes first, and ask user to incrementally commit by themselves.
 
 At minimum, create a commit after completing each increment.
 
@@ -392,6 +393,25 @@ If helping only with implementation, do not automatically perform the Git operat
 
 After every Java code update, invoke the project-local `test-ui` skill. Update
 `test/ui-test-plan.md` first when the user-visible behavior changes.
+
+## Visual diff workflow
+
+After completing each implementation checkpoint, generate a visual diff before
+asking the user to inspect and commit the changes:
+
+1. Use the project-local `present-changes-visually` skill.
+2. Compare `HEAD` with `WORKTREE` so staged, unstaged, and untracked changes
+   are included.
+3. Write the report to `_temp/visual-diff.html`, overwriting the previous
+   snapshot.
+4. Verify that the generator succeeds and report its changed-file count.
+5. Include a clickable absolute local-file link to the generated report.
+6. Explain that the report is a snapshot and should be refreshed after it is
+   regenerated.
+
+Use the bundled workspace Python runtime if `python3` is not available. Do not
+commit, tag, or push automatically; stop after showing the changes, test
+results, visual-diff link, and suggested commit message.
 
 ## Regression test maintenance
 

@@ -1,3 +1,6 @@
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -6,6 +9,8 @@ import java.util.Scanner;
  * The main entry point for SlotBot.
  */
 public class SlotBot {
+    private static final Path SAVE_FILE_PATH = Path.of("data", "slotbot.txt");
+
     /**
      * Starts SlotBot and processes user commands until the user enters bye.
      *
@@ -23,23 +28,24 @@ public class SlotBot {
                 All done. See you next time!
                 ____________________________________________________________
                 """;
-        List<Task> tasks = new ArrayList<>();
-
         System.out.print(greeting);
+
+        List<Task> tasks = loadTasks();
 
         Scanner scanner = new Scanner(System.in);
 
         // Keeps reading commands until the user ends the conversation or input is exhausted.
         while (scanner.hasNextLine()) {
             String userInput = scanner.nextLine();
+            String trimmedInput = userInput.trim();
 
             // Splits input into a command and task number by spaces.
-            String[] commandParts = userInput.trim().split("\\s+", 2);
+            String[] commandParts = trimmedInput.split("\\s+", 2);
             String command = commandParts[0];
             CommandType commandType = CommandType.fromText(command);
 
             // Prints the ending message and stops when the user enters the exit command.
-            if (commandType == CommandType.BYE && userInput.equals("bye")) {
+            if (commandType == CommandType.BYE && trimmedInput.equals("bye")) {
                 System.out.print("""
                         %s
                         %s""".formatted(separator, ending));
@@ -58,6 +64,7 @@ public class SlotBot {
                     } else {
                         selectedTask.markUndone();
                     }
+                    saveTasks(tasks);
 
                     String markMessage = shouldMark
                             ? "Nice! We got one."
@@ -85,6 +92,7 @@ public class SlotBot {
                 try {
                     int taskIndex = parseTaskNumber(command, commandParts, tasks.size());
                     Task removedTask = tasks.remove(taskIndex);
+                    saveTasks(tasks);
                     System.out.print("""
                             %s
                             Noted. I've removed this task:
@@ -105,7 +113,7 @@ public class SlotBot {
             }
 
             // Displays all stored tasks when the list command is entered.
-            if (commandType == CommandType.LIST && userInput.equals("list")) {
+            if (commandType == CommandType.LIST && trimmedInput.equals("list")) {
                 System.out.print("""
                         %s
                         Here are the tasks in your list:
@@ -124,6 +132,7 @@ public class SlotBot {
             try {
                 Task newTask = parseTask(userInput, commandType);
                 tasks.add(newTask);
+                saveTasks(tasks);
                 System.out.print("""
                         %s
                         Got it. I've added this task:
@@ -176,6 +185,132 @@ public class SlotBot {
         }
 
         return taskNumber - 1;
+    }
+
+    /**
+     * Saves all tasks to the configured save file.
+     *
+     * @param tasks Tasks to save.
+     */
+    private static void saveTasks(List<Task> tasks) {
+        try {
+            Files.createDirectories(SAVE_FILE_PATH.getParent());
+
+            List<String> taskLines = new ArrayList<>();
+            for (Task task : tasks) {
+                taskLines.add(formatTaskForSaving(task));
+            }
+            Files.write(SAVE_FILE_PATH, taskLines);
+        } catch (IOException e) {
+            System.out.println("Warning: Unable to save tasks to disk.");
+        }
+    }
+
+    /**
+     * Loads all previously saved tasks, or returns an empty list for a first launch.
+     *
+     * @return Tasks loaded from the save file.
+     */
+    private static List<Task> loadTasks() {
+        if (!Files.exists(SAVE_FILE_PATH)) {
+            return new ArrayList<>();
+        }
+
+        List<Task> tasks = new ArrayList<>();
+        List<String> taskLines;
+        try {
+            taskLines = Files.readAllLines(SAVE_FILE_PATH);
+        } catch (IOException e) {
+            System.out.println("Warning: Unable to load saved tasks.");
+            System.out.println("Starting with an empty list.");
+            return tasks;
+        }
+
+        for (int i = 0; i < taskLines.size(); i++) {
+            try {
+                tasks.add(parseSavedTask(taskLines.get(i)));
+            } catch (IllegalArgumentException e) {
+                System.out.println("Warning: Ignoring invalid task data on line " + (i + 1) + ".");
+            }
+        }
+        return tasks;
+    }
+
+    /**
+     * Converts one saved line into a task.
+     *
+     * @param taskLine Save-file representation of a task.
+     * @return Task represented by the saved line.
+     */
+    private static Task parseSavedTask(String taskLine) {
+        String[] fields = taskLine.split("\\s*\\|\\s*", -1);
+        if (fields.length < 2 || (!fields[1].equals("0") && !fields[1].equals("1"))) {
+            throw new IllegalArgumentException("Invalid task status.");
+        }
+
+        boolean isDone = fields[1].equals("1");
+        Task task = switch (fields[0]) {
+        case "T" -> {
+            validateTaskFields(fields, 3);
+            yield new Todo(fields[2]);
+        }
+        case "D" -> {
+            validateTaskFields(fields, 4);
+            yield new Deadline(fields[2], fields[3]);
+        }
+        case "E" -> {
+            validateTaskFields(fields, 5);
+            yield new Event(fields[2], fields[3], fields[4]);
+        }
+        default -> throw new IllegalArgumentException("Unknown task type.");
+        };
+
+        if (isDone) {
+            task.markDone();
+        }
+        return task;
+    }
+
+    /**
+     * Checks that a saved task has all required non-empty fields.
+     *
+     * @param fields Fields from one saved task line.
+     * @param expectedFieldCount Expected number of fields for the task type.
+     */
+    private static void validateTaskFields(String[] fields, int expectedFieldCount) {
+        if (fields.length != expectedFieldCount) {
+            throw new IllegalArgumentException("Incorrect number of task fields.");
+        }
+
+        for (int i = 2; i < fields.length; i++) {
+            if (fields[i].isBlank()) {
+                throw new IllegalArgumentException("Empty task field.");
+            }
+        }
+    }
+
+    /**
+     * Formats one task as a line in the save file.
+     *
+     * @param task Task to format.
+     * @return Save-file representation of the task.
+     */
+    private static String formatTaskForSaving(Task task) {
+        String completionStatus = task.getIsDone() ? "1" : "0";
+
+        if (task instanceof Todo) {
+            return "T | %s | %s".formatted(completionStatus, task.getDescription());
+        }
+        if (task instanceof Deadline deadline) {
+            return "D | %s | %s | %s".formatted(
+                    completionStatus, deadline.getDescription(), deadline.getDate());
+        }
+        if (task instanceof Event event) {
+            return "E | %s | %s | %s | %s".formatted(
+                    completionStatus, event.getDescription(), event.getFrom(), event.getTo());
+        }
+
+        return "T | %s | %s".formatted(completionStatus, task.getDescription());
     }
 
     /**

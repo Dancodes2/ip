@@ -68,6 +68,14 @@ Here are the tasks in your list:
 ____________________________________________________________
 
 ____________________________________________________________
+Here are the tasks in your list:
+1. [T][ ] borrow book
+2. [D][ ] return book (by: Sunday)
+3. [E][ ] project meeting (from: Mon 2pm to: 4pm)
+4. [T][ ] join sports club
+____________________________________________________________
+
+____________________________________________________________
 Please provide a task number.
 Use: delete [NUMBER]
 ____________________________________________________________
