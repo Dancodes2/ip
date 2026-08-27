@@ -2,12 +2,14 @@ $ErrorActionPreference = "Stop"
 $repositoryRoot = (Resolve-Path (Join-Path $PSScriptRoot "../../../../")).Path
 $testDirectory = Join-Path $repositoryRoot "text-ui-test"
 $compileDirectory = Join-Path $env:TEMP "slotbot-ui-test-$([Guid]::NewGuid())"
+$runtimeDirectory = Join-Path $env:TEMP "slotbot-ui-runtime-$([Guid]::NewGuid())"
 $actualPath = Join-Path $testDirectory "ACTUAL.TXT"
 $inputPath = Join-Path $testDirectory "input.txt"
 $expectedPath = Join-Path $testDirectory "EXPECTED.TXT"
 
 try {
     New-Item -ItemType Directory -Path $compileDirectory | Out-Null
+    New-Item -ItemType Directory -Path $runtimeDirectory | Out-Null
 
     $strictErrorPreference = $ErrorActionPreference
     $ErrorActionPreference = "Continue"
@@ -23,7 +25,7 @@ try {
     $processInfo = [System.Diagnostics.ProcessStartInfo]::new()
     $processInfo.FileName = "java"
     $processInfo.Arguments = "-cp `"$compileDirectory`" SlotBot"
-    $processInfo.WorkingDirectory = $repositoryRoot
+    $processInfo.WorkingDirectory = $runtimeDirectory
     $processInfo.RedirectStandardInput = $true
     $processInfo.RedirectStandardOutput = $true
     $processInfo.RedirectStandardError = $true
@@ -45,6 +47,11 @@ try {
         throw "Program exited with code $($process.ExitCode): $errorOutput"
     }
 
+    $savePath = Join-Path $runtimeDirectory "data\slotbot.txt"
+    if (-not (Test-Path -LiteralPath $savePath)) {
+        throw "UI regression test did not create the relative data/slotbot.txt save file."
+    }
+
     $normalizedActual = $actualOutput -replace "`r", ""
     $expectedOutput = Get-Content -Raw -LiteralPath $expectedPath
     $normalizedExpected = $expectedOutput -replace "`r", ""
@@ -64,5 +71,8 @@ try {
 } finally {
     if (Test-Path $compileDirectory) {
         Remove-Item -LiteralPath $compileDirectory -Recurse -Force
+    }
+    if (Test-Path $runtimeDirectory) {
+        Remove-Item -LiteralPath $runtimeDirectory -Recurse -Force
     }
 }

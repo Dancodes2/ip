@@ -12,6 +12,10 @@ correct task types, show the task count, handle invalid delete inputs safely,
 delete a task and renumber the list, and share task-number validation across
 mark, unmark, and delete.
 
+The regression runner uses a fresh temporary working directory, so the case
+also verifies that a missing save file does not prevent first launch and that
+the relative `data/slotbot.txt` file is created without touching user data.
+
 Inputs:
 
 ```text
