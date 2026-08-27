@@ -17,7 +17,7 @@ public class SlotBot {
      * @param args Command-line arguments, which are not used.
      */
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         String separator = "____________________________________________________________";
         String greeting = """
                 Hello! I'm SlotBot.
@@ -28,9 +28,9 @@ public class SlotBot {
                 All done. See you next time!
                 ____________________________________________________________
                 """;
-        List<Task> tasks = loadTasks();
-
         System.out.print(greeting);
+
+        List<Task> tasks = loadTasks();
 
         Scanner scanner = new Scanner(System.in);
 
@@ -190,32 +190,47 @@ public class SlotBot {
      * Saves all tasks to the configured save file.
      *
      * @param tasks Tasks to save.
-     * @throws IOException If the save directory or file cannot be written.
      */
-    private static void saveTasks(List<Task> tasks) throws IOException {
-        Files.createDirectories(SAVE_FILE_PATH.getParent());
+    private static void saveTasks(List<Task> tasks) {
+        try {
+            Files.createDirectories(SAVE_FILE_PATH.getParent());
 
-        List<String> taskLines = new ArrayList<>();
-        for (Task task : tasks) {
-            taskLines.add(formatTaskForSaving(task));
+            List<String> taskLines = new ArrayList<>();
+            for (Task task : tasks) {
+                taskLines.add(formatTaskForSaving(task));
+            }
+            Files.write(SAVE_FILE_PATH, taskLines);
+        } catch (IOException e) {
+            System.out.println("Warning: Unable to save tasks to disk.");
         }
-        Files.write(SAVE_FILE_PATH, taskLines);
     }
 
     /**
      * Loads all previously saved tasks, or returns an empty list for a first launch.
      *
      * @return Tasks loaded from the save file.
-     * @throws IOException If the save file cannot be read.
      */
-    private static List<Task> loadTasks() throws IOException {
+    private static List<Task> loadTasks() {
         if (!Files.exists(SAVE_FILE_PATH)) {
             return new ArrayList<>();
         }
 
         List<Task> tasks = new ArrayList<>();
-        for (String taskLine : Files.readAllLines(SAVE_FILE_PATH)) {
-            tasks.add(parseSavedTask(taskLine));
+        List<String> taskLines;
+        try {
+            taskLines = Files.readAllLines(SAVE_FILE_PATH);
+        } catch (IOException e) {
+            System.out.println("Warning: Unable to load saved tasks.");
+            System.out.println("Starting with an empty list.");
+            return tasks;
+        }
+
+        for (int i = 0; i < taskLines.size(); i++) {
+            try {
+                tasks.add(parseSavedTask(taskLines.get(i)));
+            } catch (IllegalArgumentException e) {
+                System.out.println("Warning: Ignoring invalid task data on line " + (i + 1) + ".");
+            }
         }
         return tasks;
     }
@@ -228,18 +243,49 @@ public class SlotBot {
      */
     private static Task parseSavedTask(String taskLine) {
         String[] fields = taskLine.split("\\s*\\|\\s*", -1);
+        if (fields.length < 2 || (!fields[1].equals("0") && !fields[1].equals("1"))) {
+            throw new IllegalArgumentException("Invalid task status.");
+        }
+
         boolean isDone = fields[1].equals("1");
         Task task = switch (fields[0]) {
-        case "T" -> new Todo(fields[2]);
-        case "D" -> new Deadline(fields[2], fields[3]);
-        case "E" -> new Event(fields[2], fields[3], fields[4]);
-        default -> new Todo(fields[2]);
+        case "T" -> {
+            validateTaskFields(fields, 3);
+            yield new Todo(fields[2]);
+        }
+        case "D" -> {
+            validateTaskFields(fields, 4);
+            yield new Deadline(fields[2], fields[3]);
+        }
+        case "E" -> {
+            validateTaskFields(fields, 5);
+            yield new Event(fields[2], fields[3], fields[4]);
+        }
+        default -> throw new IllegalArgumentException("Unknown task type.");
         };
 
         if (isDone) {
             task.markDone();
         }
         return task;
+    }
+
+    /**
+     * Checks that a saved task has all required non-empty fields.
+     *
+     * @param fields Fields from one saved task line.
+     * @param expectedFieldCount Expected number of fields for the task type.
+     */
+    private static void validateTaskFields(String[] fields, int expectedFieldCount) {
+        if (fields.length != expectedFieldCount) {
+            throw new IllegalArgumentException("Incorrect number of task fields.");
+        }
+
+        for (int i = 2; i < fields.length; i++) {
+            if (fields[i].isBlank()) {
+                throw new IllegalArgumentException("Empty task field.");
+            }
+        }
     }
 
     /**

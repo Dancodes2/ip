@@ -46,6 +46,22 @@ Expected output:
 
 See `text-ui-test/EXPECTED.TXT`.
 
+## Case 2: Handle save-file errors
+
+Aim: Verify that SlotBot starts with an empty list when it cannot read the
+save file, and skips malformed task records while loading other valid records.
+
+Expected warnings:
+
+```text
+Warning: Unable to load saved tasks.
+Starting with an empty list.
+```
+
+```text
+Warning: Ignoring invalid task data on line NUMBER.
+```
+
 ## Maintaining the regression test
 
 1. Edit the Java code.
