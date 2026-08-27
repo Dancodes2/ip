@@ -176,6 +176,29 @@ If a traditional `switch` case intentionally falls through to the next case, inc
 
 to make the intent explicit.
 
+## JUnit testing conventions
+
+- Place test code under `src/test/java`.
+- Match the production package structure in the test source tree.
+  - Example production class: `src/main/java/slotbot/Parser.java`
+  - Corresponding test class: `src/test/java/slotbot/ParserTest.java`
+- Name each test class after the class under test, such as `ParserTest`.
+- Use JUnit 5 and mark test methods with `@Test`.
+- Prefer test method names in the following form:
+
+```text
+unitBeingTested_descriptionOfTestInputs_expectedOutcome()
+```
+
+- Use JUnit assertions such as `assertEquals`, `assertTrue`, `assertFalse`,
+  `assertNull`, `assertNotNull`, and `assertThrows` as appropriate.
+- Design tests to catch plausible bugs, including normal, boundary, and invalid-input
+  cases for non-trivial methods where relevant.
+- Do not refactor production code solely to make testing easier unless there is a
+  clear design reason.
+- Run JUnit tests using Gradle with `.\gradlew.bat test`.
+- Keep the existing text UI regression suite passing after test-related changes.
+
 ## Git conventions
 
 Follow the CS2103T Git conventions below when proposing branch names or commit messages.
