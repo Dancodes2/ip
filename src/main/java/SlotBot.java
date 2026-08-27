@@ -8,7 +8,6 @@ import java.time.format.ResolverStyle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Scanner;
 
 /**
  * The main entry point for SlotBot.
@@ -26,34 +25,21 @@ public class SlotBot {
      */
 
     public static void main(String[] args) {
-        String separator = "____________________________________________________________";
-        String greeting = """
-                Hello! I'm SlotBot.
-                Let's keep your time and tasks in order.
-                ____________________________________________________________
-                """;
-        String ending = """
-                All done. See you next time!
-                ____________________________________________________________
-                """;
-        System.out.print(greeting);
+        Ui ui = new Ui();
+        ui.showWelcome();
 
-        TaskList tasks = new TaskList(loadTasks());
-
-        Scanner scanner = new Scanner(System.in);
+        TaskList tasks = new TaskList(loadTasks(ui));
 
         // Keeps reading commands until the user ends the conversation or input is exhausted.
-        while (scanner.hasNextLine()) {
-            String userInput = scanner.nextLine();
+        while (ui.hasNextCommand()) {
+            String userInput = ui.readCommand();
             String trimmedInput = userInput.trim();
 
             CommandType commandType = Parser.parseCommandType(userInput);
 
             // Prints the ending message and stops when the user enters the exit command.
             if (commandType == CommandType.BYE && trimmedInput.equals("bye")) {
-                System.out.print("""
-                        %s
-                        %s""".formatted(separator, ending));
+                ui.showGoodbye();
                 break;
             }
 
@@ -69,25 +55,10 @@ public class SlotBot {
                     } else {
                         selectedTask.markUndone();
                     }
-                    saveTasks(tasks);
-
-                    String markMessage = shouldMark
-                            ? "Nice! We got one."
-                            : "OK, I've marked this task as not done yet:";
-                    System.out.print("""
-                            %s
-                            %s
-                              %s
-                            %s
-
-                            """.formatted(separator, markMessage, selectedTask, separator));
+                    saveTasks(tasks, ui);
+                    ui.showTaskStatusChanged(selectedTask, shouldMark);
                 } catch (SlotBotException e) {
-                    System.out.print("""
-                            %s
-                            %s
-                            %s
-
-                            """.formatted(separator, e.getMessage(), separator));
+                    ui.showError(e.getMessage());
                 }
                 continue;
             }
@@ -97,39 +68,17 @@ public class SlotBot {
                 try {
                     int taskIndex = Parser.parseTaskNumber(userInput, tasks.size());
                     Task removedTask = tasks.delete(taskIndex);
-                    saveTasks(tasks);
-                    System.out.print("""
-                            %s
-                            Noted. I've removed this task:
-                              %s
-                            Now you have %d tasks in the list.
-                            %s
-
-                            """.formatted(separator, removedTask, tasks.size(), separator));
+                    saveTasks(tasks, ui);
+                    ui.showDeletedTask(removedTask, tasks.size());
                 } catch (SlotBotException e) {
-                    System.out.print("""
-                            %s
-                            %s
-                            %s
-
-                            """.formatted(separator, e.getMessage(), separator));
+                    ui.showError(e.getMessage());
                 }
                 continue;
             }
 
             // Displays all stored tasks when the list command is entered.
             if (commandType == CommandType.LIST && trimmedInput.equals("list")) {
-                System.out.print("""
-                        %s
-                        Here are the tasks in your list:
-                        """.formatted(separator));
-                for (int i = 0; i < tasks.size(); i++) {
-                    System.out.println((i + 1) + ". " + tasks.get(i));
-                }
-                System.out.print("""
-                        %s
-
-                        """.formatted(separator));
+                ui.showTaskList(tasks);
                 continue;
             }
 
@@ -137,22 +86,10 @@ public class SlotBot {
             try {
                 Task newTask = Parser.parseTask(userInput, commandType);
                 tasks.add(newTask);
-                saveTasks(tasks);
-                System.out.print("""
-                        %s
-                        Got it. I've added this task:
-                          %s
-                        Now you have %d tasks in the list.
-                        %s
-
-                        """.formatted(separator, newTask, tasks.size(), separator));
+                saveTasks(tasks, ui);
+                ui.showAddedTask(newTask, tasks.size());
             } catch (SlotBotException e) {
-                System.out.print("""
-                        %s
-                        %s
-                        %s
-
-                        """.formatted(separator, e.getMessage(), separator));
+                ui.showError(e.getMessage());
             }
         }
     }
@@ -161,8 +98,9 @@ public class SlotBot {
      * Saves all tasks to the configured save file.
      *
      * @param tasks Tasks to save.
+     * @param ui User interface used to report a save error.
      */
-    private static void saveTasks(TaskList tasks) {
+    private static void saveTasks(TaskList tasks, Ui ui) {
         try {
             Files.createDirectories(SAVE_FILE_PATH.getParent());
 
@@ -172,16 +110,17 @@ public class SlotBot {
             }
             Files.write(SAVE_FILE_PATH, taskLines);
         } catch (IOException e) {
-            System.out.println("Warning: Unable to save tasks to disk.");
+            ui.showSaveError();
         }
     }
 
     /**
      * Loads all previously saved tasks, or returns an empty list for a first launch.
      *
+     * @param ui User interface used to report loading problems.
      * @return Tasks loaded from the save file.
      */
-    private static List<Task> loadTasks() {
+    private static List<Task> loadTasks(Ui ui) {
         if (!Files.exists(SAVE_FILE_PATH)) {
             return new ArrayList<>();
         }
@@ -191,8 +130,7 @@ public class SlotBot {
         try {
             taskLines = Files.readAllLines(SAVE_FILE_PATH);
         } catch (IOException e) {
-            System.out.println("Warning: Unable to load saved tasks.");
-            System.out.println("Starting with an empty list.");
+            ui.showLoadError();
             return tasks;
         }
 
@@ -200,7 +138,7 @@ public class SlotBot {
             try {
                 tasks.add(parseSavedTask(taskLines.get(i)));
             } catch (RuntimeException e) {
-                System.out.println("Warning: Ignoring invalid task data on line " + (i + 1) + ".");
+                ui.showInvalidTaskDataWarning(i + 1);
             }
         }
         return tasks;
