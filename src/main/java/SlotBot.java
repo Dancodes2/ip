@@ -37,14 +37,15 @@ public class SlotBot {
         // Keeps reading commands until the user ends the conversation or input is exhausted.
         while (scanner.hasNextLine()) {
             String userInput = scanner.nextLine();
+            String trimmedInput = userInput.trim();
 
             // Splits input into a command and task number by spaces.
-            String[] commandParts = userInput.trim().split("\\s+", 2);
+            String[] commandParts = trimmedInput.split("\\s+", 2);
             String command = commandParts[0];
             CommandType commandType = CommandType.fromText(command);
 
             // Prints the ending message and stops when the user enters the exit command.
-            if (commandType == CommandType.BYE && userInput.equals("bye")) {
+            if (commandType == CommandType.BYE && trimmedInput.equals("bye")) {
                 System.out.print("""
                         %s
                         %s""".formatted(separator, ending));
@@ -112,7 +113,7 @@ public class SlotBot {
             }
 
             // Displays all stored tasks when the list command is entered.
-            if (commandType == CommandType.LIST && userInput.equals("list")) {
+            if (commandType == CommandType.LIST && trimmedInput.equals("list")) {
                 System.out.print("""
                         %s
                         Here are the tasks in your list:
