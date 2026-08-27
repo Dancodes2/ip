@@ -28,7 +28,7 @@ public class SlotBot {
                 All done. See you next time!
                 ____________________________________________________________
                 """;
-        List<Task> tasks = new ArrayList<>();
+        List<Task> tasks = loadTasks();
 
         System.out.print(greeting);
 
@@ -200,6 +200,46 @@ public class SlotBot {
             taskLines.add(formatTaskForSaving(task));
         }
         Files.write(SAVE_FILE_PATH, taskLines);
+    }
+
+    /**
+     * Loads all previously saved tasks, or returns an empty list for a first launch.
+     *
+     * @return Tasks loaded from the save file.
+     * @throws IOException If the save file cannot be read.
+     */
+    private static List<Task> loadTasks() throws IOException {
+        if (!Files.exists(SAVE_FILE_PATH)) {
+            return new ArrayList<>();
+        }
+
+        List<Task> tasks = new ArrayList<>();
+        for (String taskLine : Files.readAllLines(SAVE_FILE_PATH)) {
+            tasks.add(parseSavedTask(taskLine));
+        }
+        return tasks;
+    }
+
+    /**
+     * Converts one saved line into a task.
+     *
+     * @param taskLine Save-file representation of a task.
+     * @return Task represented by the saved line.
+     */
+    private static Task parseSavedTask(String taskLine) {
+        String[] fields = taskLine.split("\\s*\\|\\s*", -1);
+        boolean isDone = fields[1].equals("1");
+        Task task = switch (fields[0]) {
+        case "T" -> new Todo(fields[2]);
+        case "D" -> new Deadline(fields[2], fields[3]);
+        case "E" -> new Event(fields[2], fields[3], fields[4]);
+        default -> new Todo(fields[2]);
+        };
+
+        if (isDone) {
+            task.markDone();
+        }
+        return task;
     }
 
     /**
