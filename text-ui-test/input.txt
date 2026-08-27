@@ -6,7 +6,7 @@ event
 event project meeting
 event project meeting /from Mon 2pm
 todo borrow book
-deadline return book /by Sunday
+deadline return book /by 2019-10-15
 event project meeting /from Mon 2pm /to 4pm
 todo join sports club
 list

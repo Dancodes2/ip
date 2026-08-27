@@ -1,6 +1,8 @@
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -229,7 +231,7 @@ public class SlotBot {
         for (int i = 0; i < taskLines.size(); i++) {
             try {
                 tasks.add(parseSavedTask(taskLines.get(i)));
-            } catch (IllegalArgumentException e) {
+            } catch (RuntimeException e) {
                 System.out.println("Warning: Ignoring invalid task data on line " + (i + 1) + ".");
             }
         }
@@ -256,7 +258,7 @@ public class SlotBot {
         }
         case "D" -> {
             validateTaskFields(fields, 4);
-            yield new Deadline(fields[2], fields[3]);
+            yield new Deadline(fields[2], LocalDate.parse(fields[3]));
         }
         case "E" -> {
             validateTaskFields(fields, 5);
@@ -347,8 +349,13 @@ public class SlotBot {
             }
 
             String description = sentenceDeadline[0];
-            String by = sentenceDeadline[1];
-            return new Deadline(description, by);
+            try {
+                LocalDate by = LocalDate.parse(sentenceDeadline[1]);
+                return new Deadline(description, by);
+            } catch (DateTimeParseException e) {
+                throw new SlotBotException("The deadline date must use yyyy-MM-dd.\n"
+                        + "Use: deadline DESCRIPTION /by yyyy-MM-dd");
+            }
         }
 
         case EVENT: {

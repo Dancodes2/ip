@@ -13,6 +13,8 @@ delete a task and renumber the list, and share task-number validation across
 mark, unmark, and delete. Verify that leading or trailing whitespace around
 `list` and `bye` is handled the same as the plain command.
 
+Deadline inputs use the Level 8 `yyyy-MM-dd` format and display as `MMM dd yyyy`.
+
 The regression runner uses a fresh temporary working directory, so the case
 also verifies that a missing save file does not prevent first launch and that
 the relative `data/slotbot.txt` file is created without touching user data.
@@ -28,7 +30,7 @@ event
 event project meeting
 event project meeting /from Mon 2pm
 todo borrow book
-deadline return book /by Sunday
+deadline return book /by 2019-10-15
 event project meeting /from Mon 2pm /to 4pm
 todo join sports club
 list
