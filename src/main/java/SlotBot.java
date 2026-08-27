@@ -1,3 +1,6 @@
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -6,13 +9,15 @@ import java.util.Scanner;
  * The main entry point for SlotBot.
  */
 public class SlotBot {
+    private static final Path SAVE_FILE_PATH = Path.of("data", "slotbot.txt");
+
     /**
      * Starts SlotBot and processes user commands until the user enters bye.
      *
      * @param args Command-line arguments, which are not used.
      */
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         String separator = "____________________________________________________________";
         String greeting = """
                 Hello! I'm SlotBot.
@@ -58,6 +63,7 @@ public class SlotBot {
                     } else {
                         selectedTask.markUndone();
                     }
+                    saveTasks(tasks);
 
                     String markMessage = shouldMark
                             ? "Nice! We got one."
@@ -85,6 +91,7 @@ public class SlotBot {
                 try {
                     int taskIndex = parseTaskNumber(command, commandParts, tasks.size());
                     Task removedTask = tasks.remove(taskIndex);
+                    saveTasks(tasks);
                     System.out.print("""
                             %s
                             Noted. I've removed this task:
@@ -124,6 +131,7 @@ public class SlotBot {
             try {
                 Task newTask = parseTask(userInput, commandType);
                 tasks.add(newTask);
+                saveTasks(tasks);
                 System.out.print("""
                         %s
                         Got it. I've added this task:
@@ -176,6 +184,46 @@ public class SlotBot {
         }
 
         return taskNumber - 1;
+    }
+
+    /**
+     * Saves all tasks to the configured save file.
+     *
+     * @param tasks Tasks to save.
+     * @throws IOException If the save directory or file cannot be written.
+     */
+    private static void saveTasks(List<Task> tasks) throws IOException {
+        Files.createDirectories(SAVE_FILE_PATH.getParent());
+
+        List<String> taskLines = new ArrayList<>();
+        for (Task task : tasks) {
+            taskLines.add(formatTaskForSaving(task));
+        }
+        Files.write(SAVE_FILE_PATH, taskLines);
+    }
+
+    /**
+     * Formats one task as a line in the save file.
+     *
+     * @param task Task to format.
+     * @return Save-file representation of the task.
+     */
+    private static String formatTaskForSaving(Task task) {
+        String completionStatus = task.getIsDone() ? "1" : "0";
+
+        if (task instanceof Todo) {
+            return "T | %s | %s".formatted(completionStatus, task.getDescription());
+        }
+        if (task instanceof Deadline deadline) {
+            return "D | %s | %s | %s".formatted(
+                    completionStatus, deadline.getDescription(), deadline.getDate());
+        }
+        if (task instanceof Event event) {
+            return "E | %s | %s | %s | %s".formatted(
+                    completionStatus, event.getDescription(), event.getFrom(), event.getTo());
+        }
+
+        return "T | %s | %s".formatted(completionStatus, task.getDescription());
     }
 
     /**
