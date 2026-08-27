@@ -1,9 +1,16 @@
+package slotbot;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
 import java.util.Locale;
+
+import slotbot.task.Deadline;
+import slotbot.task.Event;
+import slotbot.task.Task;
+import slotbot.task.Todo;
 
 /**
  * Interprets user input as SlotBot commands and task details.

@@ -19,12 +19,12 @@ try {
         throw "Java 25 is required. Detected: $javaVersion"
     }
 
-    $sourceFiles = Get-ChildItem -Path (Join-Path $repositoryRoot "src/main/java") -Filter "*.java"
+    $sourceFiles = Get-ChildItem -Path (Join-Path $repositoryRoot "src/main/java") -Filter "*.java" -Recurse
     javac -d $compileDirectory $sourceFiles.FullName
 
     $processInfo = [System.Diagnostics.ProcessStartInfo]::new()
     $processInfo.FileName = "java"
-    $processInfo.Arguments = "-cp `"$compileDirectory`" SlotBot"
+    $processInfo.Arguments = "-cp `"$compileDirectory`" slotbot.SlotBot"
     $processInfo.WorkingDirectory = $runtimeDirectory
     $processInfo.RedirectStandardInput = $true
     $processInfo.RedirectStandardOutput = $true

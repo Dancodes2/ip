@@ -1,3 +1,5 @@
+package slotbot;
+
 /** Represents a command recognized by SlotBot. */
 public enum CommandType {
     BYE,
