@@ -68,6 +68,24 @@ public final class Parser {
     }
 
     /**
+     * Returns the search text from a find command.
+     *
+     * @param userInput Find command entered by the user.
+     * @return Non-blank search text.
+     * @throws SlotBotException If the search text is missing or blank.
+     */
+    public static String parseFindKeyword(String userInput) throws SlotBotException {
+        String[] commandParts = userInput.trim().split("\\s+", 2);
+
+        if (commandParts.length < 2 || commandParts[1].isBlank()) {
+            throw new SlotBotException("Please provide a keyword.\n"
+                    + "Use: find KEYWORD");
+        }
+
+        return commandParts[1];
+    }
+
+    /**
      * Creates a task from a user command.
      *
      * @param userInput Command entered by the user.

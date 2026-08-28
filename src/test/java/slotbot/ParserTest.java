@@ -63,4 +63,21 @@ public class ParserTest {
         assertThrows(SlotBotException.class,
                 () -> Parser.parseTaskNumber("mark 1", 0));
     }
+
+    @Test
+    public void parseFindKeyword_validKeyword_returnsKeyword() throws SlotBotException {
+        assertEquals("book", Parser.parseFindKeyword("find book"));
+    }
+
+    @Test
+    public void parseFindKeyword_missingKeyword_exceptionThrown() {
+        assertThrows(SlotBotException.class,
+                () -> Parser.parseFindKeyword("find"));
+    }
+
+    @Test
+    public void parseFindKeyword_blankKeyword_exceptionThrown() {
+        assertThrows(SlotBotException.class,
+                () -> Parser.parseFindKeyword("find   "));
+    }
 }

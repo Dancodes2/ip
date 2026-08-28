@@ -1,5 +1,6 @@
 package slotbot;
 
+import java.util.List;
 import java.util.Scanner;
 
 import slotbot.task.Task;
@@ -102,6 +103,25 @@ public class Ui {
         System.out.print("""
                 %s
                 Here are the tasks in your list:
+                """.formatted(SEPARATOR));
+        for (int i = 0; i < tasks.size(); i++) {
+            System.out.println((i + 1) + ". " + tasks.get(i));
+        }
+        System.out.print("""
+                %s
+
+                """.formatted(SEPARATOR));
+    }
+
+    /**
+     * Displays tasks matching a find keyword in their filtered order.
+     *
+     * @param tasks Matching tasks to display.
+     */
+    public void showMatchingTasks(List<Task> tasks) {
+        System.out.print("""
+                %s
+                Here are the matching tasks in your list:
                 """.formatted(SEPARATOR));
         for (int i = 0; i < tasks.size(); i++) {
             System.out.println((i + 1) + ". " + tasks.get(i));

@@ -75,6 +75,17 @@ public class SlotBot {
                 continue;
             }
 
+            // Displays tasks whose descriptions contain the requested keyword.
+            if (commandType == CommandType.FIND) {
+                try {
+                    String keyword = Parser.parseFindKeyword(userInput);
+                    ui.showMatchingTasks(tasks.findMatchingTasks(keyword));
+                } catch (SlotBotException e) {
+                    ui.showError(e.getMessage());
+                }
+                continue;
+            }
+
             // Stores valid task commands and catches parsing errors.
             try {
                 Task newTask = Parser.parseTask(userInput, commandType);
