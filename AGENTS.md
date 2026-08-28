@@ -30,6 +30,9 @@ Ensure that Java 25 is used when running the application or build tasks. On macO
 
 ## Git
 
+For every proposed, reviewed, or created commit message, read and follow the
+project-specific `.codex/skills/seedu-git-standard/SKILL.md` skill.
+
 Use lightweight tags unless the user requests an annotated tag.
 When proposing or creating a commit message, include enough detail to explain the rationale for the change.
 Do not commit or push unless explicitly asked.
