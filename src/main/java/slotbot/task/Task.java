@@ -32,7 +32,7 @@ public class Task {
      *
      * @return True if this task is done.
      */
-    public boolean getIsDone() {
+    public boolean isDone() {
         return isDone;
     }
 

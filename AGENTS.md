@@ -30,6 +30,9 @@ Ensure that Java 25 is used when running the application or build tasks. On macO
 
 ## Git
 
+For every proposed, reviewed, or created commit message, read and follow the
+project-specific `.codex/skills/seedu-git-standard/SKILL.md` skill.
+
 Use lightweight tags unless the user requests an annotated tag.
 When proposing or creating a commit message, include enough detail to explain the rationale for the change.
 Do not commit or push unless explicitly asked.
@@ -38,7 +41,12 @@ Do not commit or push unless explicitly asked.
 
 ## Java coding conventions
 
-Follow the SE-EDU Java coding standard used by CS2103T.
+For every Java code change, read and follow the project-specific
+`.codex/skills/seedu-java-coding-standard/SKILL.md` skill.
+
+Follow the required basic and intermediate rules in the SE-EDU Java coding standard
+used by CS2103T. Treat advanced rules as optional unless the user explicitly requests
+them or another project instruction makes them mandatory.
 
 For topics not covered by these rules, follow the Google Java Style Guide.
 

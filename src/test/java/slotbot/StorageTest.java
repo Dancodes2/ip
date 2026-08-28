@@ -45,18 +45,18 @@ public class StorageTest {
         assertEquals(3, tasks.size());
         assertEquals(Todo.class, tasks.get(0).getClass());
         assertEquals("finish tutorial", tasks.get(0).getDescription());
-        assertTrue(tasks.get(0).getIsDone());
+        assertTrue(tasks.get(0).isDone());
 
         assertEquals(Deadline.class, tasks.get(1).getClass());
         Deadline deadline = (Deadline) tasks.get(1);
         assertEquals("submit iP", deadline.getDescription());
-        assertFalse(deadline.getIsDone());
+        assertFalse(deadline.isDone());
         assertEquals(LocalDate.of(2026, 9, 1), deadline.getDate());
 
         assertEquals(Event.class, tasks.get(2).getClass());
         Event event = (Event) tasks.get(2);
         assertEquals("project meeting", event.getDescription());
-        assertTrue(event.getIsDone());
+        assertTrue(event.isDone());
         assertEquals(LocalDateTime.of(2026, 9, 2, 14, 0), event.getFrom());
         assertEquals(LocalDateTime.of(2026, 9, 2, 16, 0), event.getTo());
     }
@@ -75,7 +75,7 @@ public class StorageTest {
         assertEquals(2, tasks.size());
         assertEquals("first task", tasks.get(0).getDescription());
         assertEquals("later task", tasks.get(1).getDescription());
-        assertTrue(tasks.get(1).getIsDone());
+        assertTrue(tasks.get(1).isDone());
     }
 
     @Test
