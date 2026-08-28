@@ -11,7 +11,9 @@ specific errors without adding tasks, while valid task commands create the
 correct task types, show the task count, handle invalid delete inputs safely,
 delete a task and renumber the list, and share task-number validation across
 mark, unmark, and delete. Verify that leading or trailing whitespace around
-`list` and `bye` is handled the same as the plain command.
+`list` and `bye` is handled the same as the plain command. Verify that `find`
+displays matching task descriptions in their original order and displays no
+task rows when there are no matches.
 
 Deadline inputs use the Level 8 `yyyy-MM-dd` format and display as `MMM dd yyyy`.
 Event inputs use `yyyy-MM-dd HH:mm` and display as `MMM dd yyyy HH:mm`.
@@ -35,6 +37,8 @@ todo borrow book
 deadline return book /by 2019-10-15
 event project meeting /from 2019-10-15 14:00 /to 2019-10-15 16:00
 todo join sports club
+find book
+find missing
 list
 delete
 delete abc
