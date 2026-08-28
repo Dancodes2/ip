@@ -101,22 +101,22 @@ public class Storage {
 
         boolean isDone = fields[1].equals("1");
         Task task = switch (fields[0]) {
-        case "T" -> {
-            validateTaskFields(fields, 3);
-            yield new Todo(fields[2]);
-        }
-        case "D" -> {
-            validateTaskFields(fields, 4);
-            yield new Deadline(fields[2], LocalDate.parse(fields[3]));
-        }
-        case "E" -> {
-            validateTaskFields(fields, 5);
-            yield new Event(
-                    fields[2],
-                    LocalDateTime.parse(fields[3], EVENT_DATE_TIME_FORMATTER),
-                    LocalDateTime.parse(fields[4], EVENT_DATE_TIME_FORMATTER));
-        }
-        default -> throw new IllegalArgumentException("Unknown task type.");
+            case "T" -> {
+                validateTaskFields(fields, 3);
+                yield new Todo(fields[2]);
+            }
+            case "D" -> {
+                validateTaskFields(fields, 4);
+                yield new Deadline(fields[2], LocalDate.parse(fields[3]));
+            }
+            case "E" -> {
+                validateTaskFields(fields, 5);
+                yield new Event(
+                        fields[2],
+                        LocalDateTime.parse(fields[3], EVENT_DATE_TIME_FORMATTER),
+                        LocalDateTime.parse(fields[4], EVENT_DATE_TIME_FORMATTER));
+            }
+            default -> throw new IllegalArgumentException("Unknown task type.");
         };
 
         if (isDone) {
@@ -150,7 +150,7 @@ public class Storage {
      * @return Save-file representation of the task.
      */
     private String formatTaskForSaving(Task task) {
-        String completionStatus = task.getIsDone() ? "1" : "0";
+        String completionStatus = task.isDone() ? "1" : "0";
 
         if (task instanceof Todo) {
             return "T | %s | %s".formatted(completionStatus, task.getDescription());

@@ -16,7 +16,6 @@ public class SlotBot {
      *
      * @param args Command-line arguments, which are not used.
      */
-
     public static void main(String[] args) {
         Ui ui = new Ui();
         Storage storage = new Storage(SAVE_FILE_PATH, ui);

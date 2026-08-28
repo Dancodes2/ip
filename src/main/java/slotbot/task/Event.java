@@ -4,7 +4,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
-/** Represents a task that starts and ends at specified times. */
+/**
+ * Represents a task that starts and ends at specified times.
+ */
 public class Event extends Task {
     private static final DateTimeFormatter DISPLAY_FORMATTER =
             DateTimeFormatter.ofPattern("MMM dd yyyy HH:mm", Locale.ENGLISH);
@@ -51,6 +53,6 @@ public class Event extends Task {
     public String toString() {
         return "[E]" + super.toString()
                 + String.format(" (from: %s to: %s)",
-                from.format(DISPLAY_FORMATTER), to.format(DISPLAY_FORMATTER));
+                        from.format(DISPLAY_FORMATTER), to.format(DISPLAY_FORMATTER));
     }
 }

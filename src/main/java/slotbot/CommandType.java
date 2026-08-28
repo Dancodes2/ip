@@ -1,6 +1,8 @@
 package slotbot;
 
-/** Represents a command recognized by SlotBot. */
+/**
+ * Represents a command recognized by SlotBot.
+ */
 public enum CommandType {
     BYE,
     LIST,
@@ -18,7 +20,7 @@ public enum CommandType {
      * @param commandText Command text entered by the user.
      * @return Matching command type, or UNKNOWN if there is no match.
      */
-    public static CommandType fromText(String commandText) {
+    public static CommandType getCommandType(String commandText) {
         return switch (commandText) {
             case "bye" -> BYE;
             case "list" -> LIST;
