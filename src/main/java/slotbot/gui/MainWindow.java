@@ -38,6 +38,7 @@ public class MainWindow {
     public void setBot(SlotBot bot, Runnable closeWindow) {
         this.bot = bot;
         this.closeWindow = closeWindow;
+
         addMessage(bot.getWelcome(), false);
     }
 
@@ -59,12 +60,15 @@ public class MainWindow {
             focusInput();
             return;
         }
+
         addMessage(input, true);
         addMessage(bot.getResponse(input), false);
         userInput.clear();
+
         if (bot.isExiting()) {
             userInput.setDisable(true);
             sendButton.setDisable(true);
+
             PauseTransition farewell = new PauseTransition(Duration.seconds(1));
             farewell.setOnFinished(event -> closeWindow.run());
             farewell.play();
@@ -83,16 +87,19 @@ public class MainWindow {
         String displayedText = isUser ? text : text.replaceAll("(?m)^_{60}\\R?", "").strip();
         Label author = new Label(isUser ? "YOU" : "SLOTBOT");
         author.getStyleClass().add("author");
+
         Label message = new Label(displayedText);
         message.setWrapText(true);
         message.setMinWidth(0);
         message.setMaxWidth(Double.MAX_VALUE);
         message.getStyleClass().add(isUser ? "user-message" : "bot-message");
+
         VBox bubble = new VBox(5, author, message);
         bubble.setFillWidth(true);
         bubble.setMaxWidth(Double.MAX_VALUE);
         bubble.setAlignment(isUser ? Pos.TOP_RIGHT : Pos.TOP_LEFT);
         dialogContainer.getChildren().add(bubble);
+
         Platform.runLater(() -> {
             // Finish the viewport and content layout before calculating the bottom position.
             Parent root = scrollPane.getScene().getRoot();
