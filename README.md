@@ -1,5 +1,43 @@
 # SlotBot project template
 
+## Running SlotBot
+
+Use JDK 25. Run `./gradlew.bat run` to open the JavaFX chatbot, or
+`./gradlew.bat runCli` for the retained console interface.
+
+Enter a command and press Enter or click Send. For example:
+
+```text
+todo read book
+deadline return book /by 2026-09-10
+event study /from 2026-09-10 14:00 /to 2026-09-10 15:00
+list
+find book
+mark 1
+unmark 1
+delete 1
+bye
+```
+
+The GUI ignores blank submissions, wraps long replies, and scrolls to new
+messages. `bye` shows a farewell and closes the window after one second.
+Tasks are saved to `data/slotbot.txt` relative to the working directory, using
+the existing format. Both interfaces use the same data when run from the same
+directory. Storage warnings appear in the conversation.
+
+Build a distributable JAR with `./gradlew.bat shadowJar`, then launch it with
+`java -jar build/libs/slotbot.jar`. The separate `slotbot.gui.Launcher` and
+JavaFX dependencies follow the [SE-EDU JavaFX tutorial](https://se-education.org/guides/tutorials/javaFxPart1.html).
+JavaFX 17.0.7 may print unnamed-module, native-access, and deprecated-Unsafe
+warnings on Java 25; these do not prevent the verified Windows launch.
+
+Run `./gradlew.bat test` for core tests and `./gradlew.bat guiTest` for the
+JavaFX interaction test (requires a graphical desktop). Run
+`./text-ui-test/runtest.bat` for the unchanged console regression transcript.
+The console runner compiles the shared core separately from `slotbot.gui`;
+Gradle compiles and checks all Java sources, including the GUI.
+See [the GUI manual test plan](test/ui-test-plan.md#case-3-javafx-gui-level-10).
+
 ## Checking Java coding style
 
 With JDK 25 selected, run `./gradlew.bat checkstyleMain checkstyleTest` on Windows
@@ -38,7 +76,7 @@ Prerequisites: JDK 25, update Intellij to the most recent version.
    1. If there are any further prompts, accept the defaults.
 1. Configure the project to use **JDK 25** (not other versions) as explained in [here](https://www.jetbrains.com/help/idea/sdk.html#set-up-jdk).<br>
    In the same dialog, set the **Project language level** field to the `SDK default` option.
-1. After that, locate the `src/main/java/SlotBot.java` file, right-click it, and choose `Run SlotBot.main()` (if the code editor is showing compile errors, try restarting the IDE). If the setup is correct, you should see the SlotBot greeting as the output:
+1. Run `slotbot.gui.Launcher` for the GUI, or `slotbot.SlotBot` for the console. If the code editor shows compile errors, reload the Gradle project. The console greeting is:
    ```
    Hello! I'm SlotBot.
    Let's keep your time and tasks in order.
