@@ -75,6 +75,38 @@ Starting with an empty list.
 Warning: Ignoring invalid task data on line NUMBER.
 ```
 
+## Case 3: JavaFX GUI (Level-10)
+
+Launch with `./gradlew.bat run`, or build with `./gradlew.bat shadowJar` and
+run `java -jar build/libs/slotbot.jar`. The GUI uses the same relative
+`data/slotbot.txt` file as the console. For isolated manual testing, run the
+absolute JAR path from a fresh temporary directory.
+
+1. Confirm the welcome message, command input, and Send button appear.
+2. Submit `todo read book` with Enter. Expect one user message and one reply,
+   an empty input field, and focus ready for the next command.
+3. Submit `deadline return book /by 2026-09-10` using Send, then
+   `event study /from 2026-09-10 14:00 /to 2026-09-10 15:00`.
+   Expect the correct types, dates, and task counts.
+4. Run `list`, `find book`, `find missing`, `mark 1`, `unmark 1`, and `delete 3`.
+   Expect the existing console semantics and updated task status/counts.
+5. Submit empty input and spaces: expect no message or task. Submit `todo`,
+   `blah`, `mark 0`, `mark 99`, and an impossible date: expect existing error
+   messages, no crash, and no unwanted task changes.
+6. Repeat `list` until the conversation scrolls. Confirm new replies are visible,
+   older messages remain reachable, and long descriptions wrap when resizing.
+   After Enter or Send, the final line must be visible without further scrolling,
+   including when submitting from a scrolled-up position or a narrower window.
+7. Close the window and reopen from the same directory. `list` must show the
+   saved tasks. Enter `bye extra`: expect an error, not exit. Enter ` bye `:
+   expect a goodbye and the window to close after a short delay.
+8. Run the text UI regression suite. Its expected transcript must stay unchanged.
+9. With an isolated save file containing `broken` followed by `T | 0 | kept`,
+   reopen: expect a visible invalid-record warning and `list` to include `kept`.
+
+The retained console entry point is `slotbot.SlotBot`; Gradle also provides
+`runCli`. Blank-input suppression is specific to the GUI.
+
 ## Maintaining the regression test
 
 1. Edit the Java code.

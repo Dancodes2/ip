@@ -2,24 +2,37 @@ package slotbot;
 
 import java.util.List;
 import java.util.Scanner;
+import java.util.function.Consumer;
 
 import slotbot.task.Task;
 import slotbot.task.TaskList;
 
 /**
- * Handles console interactions with the user.
+ * Formats responses for the console or graphical interface.
  */
 public class Ui {
     private static final String SEPARATOR =
             "____________________________________________________________";
 
     private final Scanner scanner;
+    private final Consumer<String> output;
 
     /**
      * Creates a user interface that reads from standard input.
      */
     public Ui() {
         scanner = new Scanner(System.in);
+        output = System.out::print;
+    }
+
+    /**
+     * Creates a response formatter that sends text to the supplied destination.
+     *
+     * @param output Destination for formatted responses.
+     */
+    public Ui(Consumer<String> output) {
+        scanner = new Scanner("");
+        this.output = output;
     }
 
     /**
@@ -42,7 +55,7 @@ public class Ui {
 
     /** Displays the welcome message. */
     public void showWelcome() {
-        System.out.print("""
+        output.accept("""
                 Hello! I'm SlotBot.
                 Let's keep your time and tasks in order.
                 ____________________________________________________________
@@ -51,7 +64,7 @@ public class Ui {
 
     /** Displays the goodbye message. */
     public void showGoodbye() {
-        System.out.print("""
+        output.accept("""
                 %s
                 All done. See you next time!
                 %s
@@ -68,7 +81,7 @@ public class Ui {
         String message = isMarked
                 ? "Nice! We got one."
                 : "OK, I've marked this task as not done yet:";
-        System.out.print("""
+        output.accept("""
                 %s
                 %s
                   %s
@@ -84,7 +97,7 @@ public class Ui {
      * @param taskCount Number of tasks remaining.
      */
     public void showDeletedTask(Task task, int taskCount) {
-        System.out.print("""
+        output.accept("""
                 %s
                 Noted. I've removed this task:
                   %s
@@ -100,14 +113,14 @@ public class Ui {
      * @param tasks Tasks to display.
      */
     public void showTaskList(TaskList tasks) {
-        System.out.print("""
+        output.accept("""
                 %s
                 Here are the tasks in your list:
                 """.formatted(SEPARATOR));
         for (int i = 0; i < tasks.size(); i++) {
-            System.out.println((i + 1) + ". " + tasks.get(i));
+            output.accept((i + 1) + ". " + tasks.get(i) + System.lineSeparator());
         }
-        System.out.print("""
+        output.accept("""
                 %s
 
                 """.formatted(SEPARATOR));
@@ -119,14 +132,14 @@ public class Ui {
      * @param tasks Matching tasks to display.
      */
     public void showMatchingTasks(List<Task> tasks) {
-        System.out.print("""
+        output.accept("""
                 %s
                 Here are the matching tasks in your list:
                 """.formatted(SEPARATOR));
         for (int i = 0; i < tasks.size(); i++) {
-            System.out.println((i + 1) + ". " + tasks.get(i));
+            output.accept((i + 1) + ". " + tasks.get(i) + System.lineSeparator());
         }
-        System.out.print("""
+        output.accept("""
                 %s
 
                 """.formatted(SEPARATOR));
@@ -139,7 +152,7 @@ public class Ui {
      * @param taskCount Number of tasks after adding the task.
      */
     public void showAddedTask(Task task, int taskCount) {
-        System.out.print("""
+        output.accept("""
                 %s
                 Got it. I've added this task:
                   %s
@@ -155,7 +168,7 @@ public class Ui {
      * @param message Error message to display.
      */
     public void showError(String message) {
-        System.out.print("""
+        output.accept("""
                 %s
                 %s
                 %s
@@ -165,13 +178,13 @@ public class Ui {
 
     /** Displays a warning that tasks could not be saved. */
     public void showSaveError() {
-        System.out.println("Warning: Unable to save tasks to disk.");
+        output.accept("Warning: Unable to save tasks to disk." + System.lineSeparator());
     }
 
     /** Displays warnings that saved tasks could not be loaded. */
     public void showLoadError() {
-        System.out.println("Warning: Unable to load saved tasks.");
-        System.out.println("Starting with an empty list.");
+        output.accept("Warning: Unable to load saved tasks." + System.lineSeparator());
+        output.accept("Starting with an empty list." + System.lineSeparator());
     }
 
     /**
@@ -180,6 +193,6 @@ public class Ui {
      * @param lineNumber One-based line number containing invalid data.
      */
     public void showInvalidTaskDataWarning(int lineNumber) {
-        System.out.println("Warning: Ignoring invalid task data on line " + lineNumber + ".");
+        output.accept("Warning: Ignoring invalid task data on line " + lineNumber + "." + System.lineSeparator());
     }
 }
