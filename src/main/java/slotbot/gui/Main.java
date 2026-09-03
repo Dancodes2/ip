@@ -17,8 +17,10 @@ public class Main extends Application {
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("/view/MainWindow.fxml"));
         Scene scene = new Scene(loader.load());
         scene.getStylesheets().add(Main.class.getResource("/css/main.css").toExternalForm());
+
         MainWindow controller = loader.getController();
         controller.setBot(new SlotBot(), stage::close);
+
         stage.setTitle("SlotBot");
         stage.setMinWidth(400);
         stage.setMinHeight(420);

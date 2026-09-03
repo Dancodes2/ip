@@ -33,8 +33,10 @@ public class SlotBot {
     public SlotBot(Path saveFilePath) {
         ui = new Ui(response::append);
         storage = new Storage(saveFilePath, ui);
+
         ui.showWelcome();
         tasks = new TaskList(storage.loadTasks());
+
         welcome = response.toString();
         response.setLength(0);
     }
@@ -66,6 +68,7 @@ public class SlotBot {
         } else {
             processCommand(userInput);
         }
+
         return response.toString();
     }
 
@@ -78,6 +81,7 @@ public class SlotBot {
         Ui console = new Ui();
         SlotBot bot = new SlotBot();
         System.out.print(bot.getWelcome());
+
         while (!bot.isExiting() && console.hasNextCommand()) {
             System.out.print(bot.getResponse(console.readCommand()));
         }
@@ -112,6 +116,7 @@ public class SlotBot {
                 } else {
                     selectedTask.markUndone();
                 }
+
                 storage.saveTasks(tasks);
                 ui.showTaskStatusChanged(selectedTask, shouldMark);
             } catch (SlotBotException e) {

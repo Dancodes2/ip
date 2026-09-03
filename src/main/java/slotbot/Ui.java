@@ -93,6 +93,7 @@ public class Ui {
         String message = isMarked
                 ? "Nice! We got one."
                 : "OK, I've marked this task as not done yet:";
+
         output.accept("""
                 %s
                 %s
@@ -129,9 +130,11 @@ public class Ui {
                 %s
                 Here are the tasks in your list:
                 """.formatted(SEPARATOR));
+
         for (int i = 0; i < tasks.size(); i++) {
             showLines((i + 1) + ". " + tasks.get(i));
         }
+
         output.accept("""
                 %s
 
@@ -148,9 +151,11 @@ public class Ui {
                 %s
                 Here are the matching tasks in your list:
                 """.formatted(SEPARATOR));
+
         for (int i = 0; i < tasks.size(); i++) {
             showLines((i + 1) + ". " + tasks.get(i));
         }
+
         output.accept("""
                 %s
 
