@@ -4,6 +4,7 @@ import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -93,9 +94,11 @@ public class MainWindow {
         bubble.setAlignment(isUser ? Pos.TOP_RIGHT : Pos.TOP_LEFT);
         dialogContainer.getChildren().add(bubble);
         Platform.runLater(() -> {
-            dialogContainer.applyCss();
-            dialogContainer.layout();
-            scrollPane.setVvalue(1.0);
+            // Finish the viewport and content layout before calculating the bottom position.
+            Parent root = scrollPane.getScene().getRoot();
+            root.applyCss();
+            root.layout();
+            scrollPane.setVvalue(scrollPane.getVmax());
         });
     }
 }

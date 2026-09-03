@@ -95,6 +95,8 @@ absolute JAR path from a fresh temporary directory.
    messages, no crash, and no unwanted task changes.
 6. Repeat `list` until the conversation scrolls. Confirm new replies are visible,
    older messages remain reachable, and long descriptions wrap when resizing.
+   After Enter or Send, the final line must be visible without further scrolling,
+   including when submitting from a scrolled-up position or a narrower window.
 7. Close the window and reopen from the same directory. `list` must show the
    saved tasks. Enter `bye extra`: expect an error, not exit. Enter ` bye `:
    expect a goodbye and the window to close after a short delay.

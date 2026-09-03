@@ -87,6 +87,13 @@ up to older messages and back down. Resize the window smaller and larger.
 Expect readable wrapped text, reachable controls, and no overlapping elements.
 Check that the long word also remains readable.
 
+Autoscroll regression: after each submission, the last line of the newest
+reply must already be visible without scrolling further. Check both Enter and
+Send, including after scrolling up to older messages and after narrowing the
+window. You must still be able to scroll up manually between submissions.
+For a reply taller than the viewport, expect its bottom to be visible; scroll
+up to read its beginning.
+
 ## 7. Window close and reload
 
 Close using the window's X. In the same PowerShell session, run:
