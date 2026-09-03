@@ -1,13 +1,13 @@
 package slotbot.task;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.time.LocalDate;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TaskListTest {
 
@@ -50,7 +50,6 @@ public class TaskListTest {
         List<Task> matches = new TaskList(List.of(new Todo("read book")))
                 .findMatchingTasks("book");
 
-        assertThrows(UnsupportedOperationException.class,
-                () -> matches.add(new Todo("new task")));
+        assertThrows(UnsupportedOperationException.class, () -> matches.add(new Todo("new task")));
     }
 }
