@@ -53,6 +53,18 @@ public class Ui {
         return scanner.nextLine();
     }
 
+    /**
+     * Displays each supplied line in order, followed by the system line separator.
+     * Supplying no lines produces no output; an empty string produces a blank line.
+     *
+     * @param lines Lines to display.
+     */
+    public void showLines(String... lines) {
+        for (String line : lines) {
+            output.accept(line + System.lineSeparator());
+        }
+    }
+
     /** Displays the welcome message. */
     public void showWelcome() {
         output.accept("""
@@ -118,7 +130,7 @@ public class Ui {
                 Here are the tasks in your list:
                 """.formatted(SEPARATOR));
         for (int i = 0; i < tasks.size(); i++) {
-            output.accept((i + 1) + ". " + tasks.get(i) + System.lineSeparator());
+            showLines((i + 1) + ". " + tasks.get(i));
         }
         output.accept("""
                 %s
@@ -137,7 +149,7 @@ public class Ui {
                 Here are the matching tasks in your list:
                 """.formatted(SEPARATOR));
         for (int i = 0; i < tasks.size(); i++) {
-            output.accept((i + 1) + ". " + tasks.get(i) + System.lineSeparator());
+            showLines((i + 1) + ". " + tasks.get(i));
         }
         output.accept("""
                 %s
@@ -178,13 +190,12 @@ public class Ui {
 
     /** Displays a warning that tasks could not be saved. */
     public void showSaveError() {
-        output.accept("Warning: Unable to save tasks to disk." + System.lineSeparator());
+        showLines("Warning: Unable to save tasks to disk.");
     }
 
     /** Displays warnings that saved tasks could not be loaded. */
     public void showLoadError() {
-        output.accept("Warning: Unable to load saved tasks." + System.lineSeparator());
-        output.accept("Starting with an empty list." + System.lineSeparator());
+        showLines("Warning: Unable to load saved tasks.", "Starting with an empty list.");
     }
 
     /**
@@ -193,6 +204,6 @@ public class Ui {
      * @param lineNumber One-based line number containing invalid data.
      */
     public void showInvalidTaskDataWarning(int lineNumber) {
-        output.accept("Warning: Ignoring invalid task data on line " + lineNumber + "." + System.lineSeparator());
+        showLines("Warning: Ignoring invalid task data on line " + lineNumber + ".");
     }
 }
