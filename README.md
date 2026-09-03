@@ -18,6 +18,13 @@ and rerun the command. See the
 [SE-EDU tutorial](https://se-education.org/guides/tutorials/checkstyle.html)
 for optional IntelliJ integration; use Checkstyle 11.0.0 and this project's config.
 
+To test the Checkstyle setup itself, run
+`./gradlew.bat -I test/checkstyle-regression.gradle verifyCheckstyleRules`.
+This generates isolated fixtures under `build/`, checks that compliant code passes,
+and verifies that deliberate style errors and warnings are detected. Diagnostics
+for the invalid fixture are expected; the task must finish with `PASS` and
+`BUILD SUCCESSFUL`.
+
 This is a project template for a greenfield Java project called _SlotBot_. Given below are instructions on how to use it.
 
 ## Setting up in Intellij
