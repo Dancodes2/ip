@@ -1,5 +1,23 @@
 # SlotBot project template
 
+## Checking Java coding style
+
+With JDK 25 selected, run `./gradlew.bat checkstyleMain checkstyleTest` on Windows
+to check production and test sources. These checks also run as part of
+`./gradlew.bat check`. Both errors and warnings fail the check.
+
+The rules in `config/checkstyle/checkstyle.xml` and test Javadoc exceptions in
+`config/checkstyle/suppressions.xml` come from the
+[SE-EDU AddressBook Level 3 configuration](https://github.com/se-edu/addressbook-level3/tree/master/config/checkstyle).
+Checkstyle catches automated style violations; continue following the project's
+coding standard for requirements that need human judgment.
+
+After a run, open `build/reports/checkstyle/main.html` or
+`build/reports/checkstyle/test.html` to inspect violations. Fix the reported code
+and rerun the command. See the
+[SE-EDU tutorial](https://se-education.org/guides/tutorials/checkstyle.html)
+for optional IntelliJ integration; use Checkstyle 11.0.0 and this project's config.
+
 This is a project template for a greenfield Java project called _SlotBot_. Given below are instructions on how to use it.
 
 ## Setting up in Intellij
