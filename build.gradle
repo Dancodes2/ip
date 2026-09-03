@@ -20,6 +20,21 @@ checkstyle {
 }
 
 dependencies {
+    String javaFxVersion = '17.0.7'
+
+    implementation("org.openjfx:javafx-base:${javaFxVersion}:win")
+    implementation("org.openjfx:javafx-base:${javaFxVersion}:mac")
+    implementation("org.openjfx:javafx-base:${javaFxVersion}:linux")
+    implementation("org.openjfx:javafx-controls:${javaFxVersion}:win")
+    implementation("org.openjfx:javafx-controls:${javaFxVersion}:mac")
+    implementation("org.openjfx:javafx-controls:${javaFxVersion}:linux")
+    implementation("org.openjfx:javafx-fxml:${javaFxVersion}:win")
+    implementation("org.openjfx:javafx-fxml:${javaFxVersion}:mac")
+    implementation("org.openjfx:javafx-fxml:${javaFxVersion}:linux")
+    implementation("org.openjfx:javafx-graphics:${javaFxVersion}:win")
+    implementation("org.openjfx:javafx-graphics:${javaFxVersion}:mac")
+    implementation("org.openjfx:javafx-graphics:${javaFxVersion}:linux")
+
     String jUnitVersion = '5.14.4'
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:${jUnitVersion}"
@@ -29,7 +44,9 @@ dependencies {
 }
 
 test {
-    useJUnitPlatform()
+    useJUnitPlatform {
+        excludeTags 'gui'
+    }
 
     testLogging {
         events 'passed', 'skipped', 'failed'
@@ -43,7 +60,7 @@ test {
 }
 
 application {
-    mainClass = 'slotbot.SlotBot'
+    mainClass = 'slotbot.gui.Launcher'
 }
 
 jar {
@@ -59,4 +76,22 @@ shadowJar {
 
 run {
     standardInput = System.in
+}
+
+tasks.register('runCli', JavaExec) {
+    description = 'Runs the retained text interface.'
+    group = 'application'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'slotbot.SlotBot'
+    standardInput = System.in
+}
+
+tasks.register('guiTest', Test) {
+    description = 'Tests the JavaFX controls; requires a graphical desktop.'
+    group = 'verification'
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+    useJUnitPlatform {
+        includeTags 'gui'
+    }
 }

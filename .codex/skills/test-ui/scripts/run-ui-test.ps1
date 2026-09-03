@@ -19,7 +19,9 @@ try {
         throw "Java 25 is required. Detected: $javaVersion"
     }
 
-    $sourceFiles = Get-ChildItem -Path (Join-Path $repositoryRoot "src/main/java") -Filter "*.java" -Recurse
+    # Compile the retained console and shared core without the JavaFX-only package.
+    $sourceFiles = Get-ChildItem -Path (Join-Path $repositoryRoot "src/main/java") -Filter "*.java" -Recurse |
+        Where-Object { $_.FullName -notmatch '[\\/]slotbot[\\/]gui[\\/]' }
     javac -d $compileDirectory $sourceFiles.FullName
 
     $processInfo = [System.Diagnostics.ProcessStartInfo]::new()
