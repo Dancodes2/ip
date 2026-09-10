@@ -107,6 +107,15 @@ absolute JAR path from a fresh temporary directory.
 The retained console entry point is `slotbot.SlotBot`; Gradle also provides
 `runCli`. Blank-input suppression is specific to the GUI.
 
+## Case 4: Show upcoming deadline reminders
+
+Aim: Verify that `reminders` reports unfinished deadlines in the seven-day
+window, orders them by due date, and shows a clear message when none are due.
+Completed deadlines, overdue deadlines, and non-deadline tasks must not appear.
+
+The command uses the current system date. The automated unit tests use a fixed
+clock so that the date-window boundaries remain deterministic.
+
 ## Maintaining the regression test
 
 1. Edit the Java code.

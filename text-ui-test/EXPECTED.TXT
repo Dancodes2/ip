@@ -2,6 +2,11 @@ Hello! I'm SlotBot.
 Let's keep your time and tasks in order.
 ____________________________________________________________
 ____________________________________________________________
+Upcoming reminders (through the next 7 days):
+No upcoming deadlines.
+____________________________________________________________
+
+____________________________________________________________
 The description of a todo cannot be empty.
 Use: todo DESCRIPTION
 ____________________________________________________________
