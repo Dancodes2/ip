@@ -109,16 +109,8 @@ public class SlotBot {
             return;
         }
 
-        // Removes the selected task from the list.
         if (commandType == CommandType.DELETE) {
-            try {
-                int taskIndex = Parser.parseTaskNumber(userInput, tasks.size());
-                Task removedTask = tasks.delete(taskIndex);
-                storage.saveTasks(tasks);
-                ui.showDeletedTask(removedTask, tasks.size());
-            } catch (SlotBotException e) {
-                ui.showError(e.getMessage());
-            }
+            handleDelete(userInput);
             return;
         }
 
@@ -170,6 +162,23 @@ public class SlotBot {
 
             storage.saveTasks(tasks);
             ui.showTaskStatusChanged(selectedTask, shouldMark);
+        } catch (SlotBotException e) {
+            ui.showError(e.getMessage());
+        }
+    }
+
+    /**
+     * Deletes the task selected by the command.
+     *
+     * @param userInput Command containing the task number.
+     */
+    private void handleDelete(String userInput) {
+        try {
+            int taskIndex = Parser.parseTaskNumber(userInput, tasks.size());
+            Task removedTask = tasks.delete(taskIndex);
+
+            storage.saveTasks(tasks);
+            ui.showDeletedTask(removedTask, tasks.size());
         } catch (SlotBotException e) {
             ui.showError(e.getMessage());
         }
