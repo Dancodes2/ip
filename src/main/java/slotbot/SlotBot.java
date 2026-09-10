@@ -105,23 +105,7 @@ public class SlotBot {
         }
 
         if (commandType == CommandType.MARK || commandType == CommandType.UNMARK) {
-            try {
-                int taskIndex = Parser.parseTaskNumber(userInput, tasks.size());
-                Task selectedTask = tasks.get(taskIndex);
-
-                // Marks or unmarks the selected task based on the command.
-                boolean shouldMark = commandType == CommandType.MARK;
-                if (shouldMark) {
-                    selectedTask.markDone();
-                } else {
-                    selectedTask.markUndone();
-                }
-
-                storage.saveTasks(tasks);
-                ui.showTaskStatusChanged(selectedTask, shouldMark);
-            } catch (SlotBotException e) {
-                ui.showError(e.getMessage());
-            }
+            handleTaskStatusChange(userInput, commandType);
             return;
         }
 
@@ -161,6 +145,31 @@ public class SlotBot {
             tasks.add(newTask);
             storage.saveTasks(tasks);
             ui.showAddedTask(newTask, tasks.size());
+        } catch (SlotBotException e) {
+            ui.showError(e.getMessage());
+        }
+    }
+
+    /**
+     * Marks or unmarks the task selected by the command.
+     *
+     * @param userInput Command containing the task number.
+     * @param commandType MARK or UNMARK command type.
+     */
+    private void handleTaskStatusChange(String userInput, CommandType commandType) {
+        try {
+            int taskIndex = Parser.parseTaskNumber(userInput, tasks.size());
+            Task selectedTask = tasks.get(taskIndex);
+            boolean shouldMark = commandType == CommandType.MARK;
+
+            if (shouldMark) {
+                selectedTask.markDone();
+            } else {
+                selectedTask.markUndone();
+            }
+
+            storage.saveTasks(tasks);
+            ui.showTaskStatusChanged(selectedTask, shouldMark);
         } catch (SlotBotException e) {
             ui.showError(e.getMessage());
         }
