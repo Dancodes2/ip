@@ -84,4 +84,40 @@ public class TaskListTest {
 
         assertThrows(UnsupportedOperationException.class, () -> matches.add(new Todo("new task")));
     }
+
+    @Test
+    public void findUpcomingDeadlines_withinWindow_returnsSortedUnfinishedDeadlines() {
+        Deadline laterDeadline = new Deadline("later", LocalDate.of(2026, 9, 15));
+        Deadline earlierDeadline = new Deadline("earlier", LocalDate.of(2026, 9, 12));
+        Deadline completedDeadline = new Deadline("completed", LocalDate.of(2026, 9, 13));
+        completedDeadline.markDone();
+        TaskList tasks = new TaskList(List.of(
+                laterDeadline,
+                new Todo("not a deadline"),
+                earlierDeadline,
+                completedDeadline));
+
+        List<Deadline> reminders = tasks.findUpcomingDeadlines(LocalDate.of(2026, 9, 11), 4);
+
+        assertEquals(List.of(earlierDeadline, laterDeadline), reminders);
+    }
+
+    @Test
+    public void findUpcomingDeadlines_excludesOutsideWindow() {
+        Deadline overdue = new Deadline("overdue", LocalDate.of(2026, 9, 10));
+        Deadline atBoundary = new Deadline("boundary", LocalDate.of(2026, 9, 18));
+        Deadline beyondBoundary = new Deadline("later", LocalDate.of(2026, 9, 19));
+        TaskList tasks = new TaskList(List.of(overdue, atBoundary, beyondBoundary));
+
+        List<Deadline> reminders = tasks.findUpcomingDeadlines(LocalDate.of(2026, 9, 11), 7);
+
+        assertEquals(List.of(atBoundary), reminders);
+    }
+
+    @Test
+    public void findUpcomingDeadlines_nullStartDate_assertionError() {
+        TaskList tasks = new TaskList(List.of());
+
+        assertThrows(AssertionError.class, () -> tasks.findUpcomingDeadlines(null, 7));
+    }
 }
