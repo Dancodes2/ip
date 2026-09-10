@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.function.Consumer;
 
+import slotbot.task.Deadline;
 import slotbot.task.Task;
 import slotbot.task.TaskList;
 
@@ -154,6 +155,32 @@ public class Ui {
 
         for (int i = 0; i < tasks.size(); i++) {
             showLines((i + 1) + ". " + tasks.get(i));
+        }
+
+        output.accept("""
+                %s
+
+                """.formatted(SEPARATOR));
+    }
+
+    /**
+     * Displays unfinished deadlines within the reminder window.
+     *
+     * @param reminders Deadlines to display in due-date order.
+     * @param daysAhead Number of days after today included in the window.
+     */
+    public void showReminders(List<Deadline> reminders, int daysAhead) {
+        output.accept("""
+                %s
+                Upcoming reminders (through the next %d days):
+                """.formatted(SEPARATOR, daysAhead));
+
+        if (reminders.isEmpty()) {
+            showLines("No upcoming deadlines.");
+        } else {
+            for (int i = 0; i < reminders.size(); i++) {
+                showLines((i + 1) + ". " + reminders.get(i));
+            }
         }
 
         output.accept("""
