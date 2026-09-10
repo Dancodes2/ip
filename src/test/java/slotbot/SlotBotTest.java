@@ -7,6 +7,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneOffset;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -85,5 +88,33 @@ public class SlotBotTest {
         SlotBot bot = new SlotBot(parentFile.resolve("tasks.txt"));
 
         assertTrue(bot.getResponse("todo unsaved").contains("Warning: Unable to save tasks to disk."));
+    }
+
+    @Test
+    public void getResponse_reminders_returnsUpcomingUnfinishedDeadlines() {
+        Clock clock = Clock.fixed(Instant.parse("2026-09-11T00:00:00Z"), ZoneOffset.UTC);
+        SlotBot bot = new SlotBot(directory.resolve("tasks.txt"), clock);
+
+        bot.getResponse("deadline later /by 2026-09-18");
+        bot.getResponse("deadline today /by 2026-09-11");
+        bot.getResponse("deadline completed /by 2026-09-12");
+        bot.getResponse("deadline outside /by 2026-09-19");
+        bot.getResponse("mark 3");
+
+        String response = bot.getResponse("reminders");
+
+        assertTrue(response.contains("today"));
+        assertTrue(response.contains("later"));
+        assertFalse(response.contains("completed"));
+        assertFalse(response.contains("outside"));
+        assertTrue(response.indexOf("today") < response.indexOf("later"));
+    }
+
+    @Test
+    public void getResponse_reminders_emptyMessage() {
+        Clock clock = Clock.fixed(Instant.parse("2026-09-11T00:00:00Z"), ZoneOffset.UTC);
+        SlotBot bot = new SlotBot(directory.resolve("tasks.txt"), clock);
+
+        assertTrue(bot.getResponse("reminders").contains("No upcoming deadlines."));
     }
 }

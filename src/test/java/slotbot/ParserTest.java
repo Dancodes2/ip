@@ -71,4 +71,9 @@ public class ParserTest {
     public void parseFindKeyword_blankKeyword_exceptionThrown() {
         assertThrows(SlotBotException.class, () -> Parser.parseFindKeyword("find   "));
     }
+
+    @Test
+    public void parseCommandType_reminders_returnsReminders() {
+        assertEquals(CommandType.REMINDERS, Parser.parseCommandType("reminders"));
+    }
 }

@@ -13,6 +13,7 @@ deadline return book /by 2026-09-10
 event study /from 2026-09-10 14:00 /to 2026-09-10 15:00
 list
 find book
+reminders
 mark 1
 unmark 1
 delete 1
@@ -24,6 +25,8 @@ messages. `bye` shows a farewell and closes the window after one second.
 Tasks are saved to `data/slotbot.txt` relative to the working directory, using
 the existing format. Both interfaces use the same data when run from the same
 directory. Storage warnings appear in the conversation.
+The `reminders` command lists unfinished deadlines due today through the next
+seven days, ordered by due date.
 
 Build a distributable JAR with `./gradlew.bat shadowJar`, then launch it with
 `java -jar build/libs/slotbot.jar`. The separate `slotbot.gui.Launcher` and

@@ -1,6 +1,8 @@
 package slotbot;
 
 import java.nio.file.Path;
+import java.time.Clock;
+import java.time.LocalDate;
 
 import slotbot.task.Task;
 import slotbot.task.TaskList;
@@ -10,12 +12,14 @@ import slotbot.task.TaskList;
  */
 public class SlotBot {
     private static final Path SAVE_FILE_PATH = Path.of("data", "slotbot.txt");
+    private static final int REMINDER_WINDOW_DAYS = 7;
 
     private final StringBuilder response = new StringBuilder();
     private final Ui ui;
     private final Storage storage;
     private final TaskList tasks;
     private final String welcome;
+    private final Clock clock;
     private boolean isExiting;
 
     /**
@@ -31,8 +35,21 @@ public class SlotBot {
      * @param saveFilePath Path of the task data file.
      */
     public SlotBot(Path saveFilePath) {
+        this(saveFilePath, Clock.systemDefaultZone());
+    }
+
+    /**
+     * Creates a chatbot and loads its saved tasks using the supplied clock.
+     *
+     * @param saveFilePath Path of the task data file.
+     * @param clock Clock used to determine the current date for reminders.
+     */
+    public SlotBot(Path saveFilePath, Clock clock) {
+        assert clock != null : "Clock must not be null";
+
         ui = new Ui(response::append);
         storage = new Storage(saveFilePath, ui);
+        this.clock = clock;
 
         ui.showWelcome();
         tasks = new TaskList(storage.loadTasks());
@@ -111,6 +128,13 @@ public class SlotBot {
 
         if (commandType == CommandType.DELETE) {
             handleDelete(userInput);
+            return;
+        }
+
+        if (commandType == CommandType.REMINDERS && trimmedInput.equals("reminders")) {
+            ui.showReminders(
+                    tasks.findUpcomingDeadlines(LocalDate.now(clock), REMINDER_WINDOW_DAYS),
+                    REMINDER_WINDOW_DAYS);
             return;
         }
 

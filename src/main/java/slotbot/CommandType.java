@@ -6,6 +6,7 @@ package slotbot;
 public enum CommandType {
     BYE,
     LIST,
+    REMINDERS,
     MARK,
     UNMARK,
     DELETE,
@@ -25,6 +26,7 @@ public enum CommandType {
         return switch (commandText) {
             case "bye" -> BYE;
             case "list" -> LIST;
+            case "reminders" -> REMINDERS;
             case "mark" -> MARK;
             case "unmark" -> UNMARK;
             case "delete" -> DELETE;
