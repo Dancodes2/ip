@@ -5,11 +5,43 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
 public class TaskListTest {
+
+    @Test
+    public void constructor_nullTaskList_assertionError() {
+        assertThrows(AssertionError.class, () -> new TaskList(null));
+    }
+
+    @Test
+    public void constructor_taskListContainingNull_assertionError() {
+        assertThrows(AssertionError.class, () -> new TaskList(Arrays.asList((Task) null)));
+    }
+
+    @Test
+    public void add_nullTask_assertionError() {
+        TaskList tasks = new TaskList(List.of());
+
+        assertThrows(AssertionError.class, () -> tasks.add(null));
+    }
+
+    @Test
+    public void get_indexEqualToSize_assertionError() {
+        TaskList tasks = new TaskList(List.of(new Todo("read book")));
+
+        assertThrows(AssertionError.class, () -> tasks.get(1));
+    }
+
+    @Test
+    public void delete_negativeIndex_assertionError() {
+        TaskList tasks = new TaskList(List.of(new Todo("read book")));
+
+        assertThrows(AssertionError.class, () -> tasks.delete(-1));
+    }
 
     @Test
     public void findMatchingTasks_matchingDescriptions_preservesOrder() {
