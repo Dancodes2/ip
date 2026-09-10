@@ -12,6 +12,20 @@ import org.junit.jupiter.api.Test;
 public class TaskListTest {
 
     @Test
+    public void get_indexEqualToSize_assertionError() {
+        TaskList tasks = new TaskList(List.of(new Todo("read book")));
+
+        assertThrows(AssertionError.class, () -> tasks.get(1));
+    }
+
+    @Test
+    public void delete_negativeIndex_assertionError() {
+        TaskList tasks = new TaskList(List.of(new Todo("read book")));
+
+        assertThrows(AssertionError.class, () -> tasks.delete(-1));
+    }
+
+    @Test
     public void findMatchingTasks_matchingDescriptions_preservesOrder() {
         Task firstMatch = new Todo("read book");
         Task nonMatch = new Todo("join club");

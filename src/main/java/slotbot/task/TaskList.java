@@ -34,6 +34,8 @@ public class TaskList {
      * @return Deleted task.
      */
     public Task delete(int index) {
+        assert index >= 0 && index < tasks.size() : "Task index must be within the list";
+
         return tasks.remove(index);
     }
 
@@ -44,6 +46,8 @@ public class TaskList {
      * @return Task at the given index.
      */
     public Task get(int index) {
+        assert index >= 0 && index < tasks.size() : "Task index must be within the list";
+
         return tasks.get(index);
     }
 
