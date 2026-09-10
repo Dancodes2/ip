@@ -120,14 +120,8 @@ public class SlotBot {
             return;
         }
 
-        // Displays tasks whose descriptions contain the requested keyword.
         if (commandType == CommandType.FIND) {
-            try {
-                String keyword = Parser.parseFindKeyword(userInput);
-                ui.showMatchingTasks(tasks.findMatchingTasks(keyword));
-            } catch (SlotBotException e) {
-                ui.showError(e.getMessage());
-            }
+            handleFind(userInput);
             return;
         }
 
@@ -179,6 +173,20 @@ public class SlotBot {
 
             storage.saveTasks(tasks);
             ui.showDeletedTask(removedTask, tasks.size());
+        } catch (SlotBotException e) {
+            ui.showError(e.getMessage());
+        }
+    }
+
+    /**
+     * Displays tasks matching the keyword in the command.
+     *
+     * @param userInput Command containing the search keyword.
+     */
+    private void handleFind(String userInput) {
+        try {
+            String keyword = Parser.parseFindKeyword(userInput);
+            ui.showMatchingTasks(tasks.findMatchingTasks(keyword));
         } catch (SlotBotException e) {
             ui.showError(e.getMessage());
         }
