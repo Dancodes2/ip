@@ -125,10 +125,20 @@ public class SlotBot {
             return;
         }
 
-        // Stores valid task commands and catches parsing errors.
+        handleAddTask(userInput, commandType);
+    }
+
+    /**
+     * Creates and stores a task from the command.
+     *
+     * @param userInput Command containing the task details.
+     * @param commandType Type of task to create.
+     */
+    private void handleAddTask(String userInput, CommandType commandType) {
         try {
             Task newTask = Parser.parseTask(userInput, commandType);
             tasks.add(newTask);
+
             storage.saveTasks(tasks);
             ui.showAddedTask(newTask, tasks.size());
         } catch (SlotBotException e) {
