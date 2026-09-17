@@ -45,7 +45,11 @@ public class SlotBotTest {
         bot.getResponse("todo read book");
         String before = bot.getResponse("list");
         String[] commands = {"", "todo", "blah", "mark 0", "mark 2", "delete abc",
-            "deadline bad /by 2026-02-30", "find", "bye extra"};
+            "deadline bad /by 2026-02-30", "deadline repeated /by 2026-09-18 /by 2026-09-19",
+            "todo unsafe | description",
+            "event same /from 2026-09-18 10:00 /to 2026-09-18 10:00",
+            "event reversed /from 2026-09-18 11:00 /to 2026-09-18 10:00",
+            "find", "bye extra"};
 
         for (String command : commands) {
             String reply = bot.getResponse(command);

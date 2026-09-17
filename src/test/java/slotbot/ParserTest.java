@@ -3,7 +3,11 @@ package slotbot;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.time.LocalDate;
+
 import org.junit.jupiter.api.Test;
+
+import slotbot.task.Deadline;
 
 public class ParserTest {
 
@@ -75,5 +79,48 @@ public class ParserTest {
     @Test
     public void parseCommandType_reminders_returnsReminders() {
         assertEquals(CommandType.REMINDERS, Parser.parseCommandType("reminders"));
+    }
+
+    @Test
+    public void parseTask_deadlineWithExtraSeparator_exceptionThrown() {
+        assertThrows(SlotBotException.class, () -> Parser.parseTask(
+                "deadline submit /by 2026-09-18 /by 2026-09-19", CommandType.DEADLINE));
+    }
+
+    @Test
+    public void parseTask_deadlineWithExtraSpacing_returnsDeadline() throws SlotBotException {
+        Deadline deadline = (Deadline) Parser.parseTask(
+                "deadline submit   /by   2026-09-18", CommandType.DEADLINE);
+
+        assertEquals("submit", deadline.getDescription());
+        assertEquals(LocalDate.of(2026, 9, 18), deadline.getDate());
+    }
+
+    @Test
+    public void parseTask_descriptionWithStorageSeparator_exceptionThrown() {
+        assertThrows(SlotBotException.class, () -> Parser.parseTask(
+                "todo unsafe | description", CommandType.TODO));
+    }
+
+    @Test
+    public void parseTask_eventWithExtraSeparator_exceptionThrown() {
+        assertThrows(SlotBotException.class, () -> Parser.parseTask(
+                "event meeting /from 2026-09-18 10:00 /from 2026-09-18 11:00 "
+                        + "/to 2026-09-18 12:00",
+                CommandType.EVENT));
+    }
+
+    @Test
+    public void parseTask_eventWithEqualTimes_exceptionThrown() {
+        assertThrows(SlotBotException.class, () -> Parser.parseTask(
+                "event meeting /from 2026-09-18 10:00 /to 2026-09-18 10:00",
+                CommandType.EVENT));
+    }
+
+    @Test
+    public void parseTask_eventWithReversedTimes_exceptionThrown() {
+        assertThrows(SlotBotException.class, () -> Parser.parseTask(
+                "event meeting /from 2026-09-18 11:00 /to 2026-09-18 10:00",
+                CommandType.EVENT));
     }
 }
