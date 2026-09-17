@@ -121,4 +121,38 @@ public class SlotBotTest {
 
         assertTrue(bot.getResponse("reminders").contains("No upcoming deadlines."));
     }
+
+    @Test
+    public void getResponse_commandsRequiringExactInput_rejectsExtraArguments() {
+        SlotBot bot = new SlotBot(directory.resolve("tasks.txt"));
+
+        assertTrue(bot.getResponse("list extra").contains("don't recognise that command"));
+        assertTrue(bot.getResponse("reminders extra").contains("don't recognise that command"));
+        assertFalse(bot.isExiting());
+    }
+
+    @Test
+    public void getResponse_duplicateTasks_addsBothTasks() {
+        SlotBot bot = new SlotBot(directory.resolve("tasks.txt"));
+
+        bot.getResponse("todo read book");
+        bot.getResponse("todo read book");
+        String response = bot.getResponse("list");
+
+        assertTrue(response.contains("1. [T][ ] read book"));
+        assertTrue(response.contains("2. [T][ ] read book"));
+    }
+
+    @Test
+    public void getResponse_afterExit_returnsGoodbyeWithoutChangingTasks() {
+        Path save = directory.resolve("tasks.txt");
+        SlotBot bot = new SlotBot(save);
+        bot.getResponse("todo saved");
+        bot.getResponse("bye");
+
+        String response = bot.getResponse("delete 1");
+
+        assertTrue(response.contains("See you next time"));
+        assertTrue(new SlotBot(save).getResponse("list").contains("saved"));
+    }
 }
