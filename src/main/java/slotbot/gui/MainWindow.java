@@ -3,10 +3,8 @@ package slotbot.gui;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
@@ -102,20 +100,7 @@ public class MainWindow {
      */
     private void addMessage(String text, boolean isUser) {
         String displayedText = isUser ? text : text.replaceAll("(?m)^_{60}\\R?", "").strip();
-        Label author = new Label(isUser ? "YOU" : "SLOTBOT");
-        author.getStyleClass().add("author");
-
-        Label message = new Label(displayedText);
-        message.setWrapText(true);
-        message.setMinWidth(0);
-        message.setMaxWidth(Double.MAX_VALUE);
-        message.getStyleClass().add(isUser ? "user-message" : "bot-message");
-
-        VBox bubble = new VBox(5, author, message);
-        bubble.setFillWidth(true);
-        bubble.setMaxWidth(Double.MAX_VALUE);
-        bubble.setAlignment(isUser ? Pos.TOP_RIGHT : Pos.TOP_LEFT);
-        dialogContainer.getChildren().add(bubble);
+        dialogContainer.getChildren().add(new MessageBubble(displayedText, isUser));
 
         isPinnedToBottom = true;
         scrollToLatestMessage();

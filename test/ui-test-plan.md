@@ -96,6 +96,8 @@ run `java -jar build/libs/slotbot.jar`. The GUI uses the same relative
 absolute JAR path from a fresh temporary directory.
 
 1. Confirm the welcome message, command input, and Send button appear.
+   Confirm SlotBot messages are left-aligned, user messages are right-aligned,
+   and each bubble is visually distinct without occupying unnecessary width.
 2. Submit `todo read book` with Enter. Expect one user message and one reply,
    an empty input field, and focus ready for the next command.
 3. Submit `deadline return book /by 2026-09-10` using Send, then
@@ -113,6 +115,8 @@ absolute JAR path from a fresh temporary directory.
    conversation must preserve that manual position. After Enter or Send, the
    final line must be visible without further scrolling, including when
    submitting from a scrolled-up position or a narrower window.
+   Confirm bubbles remain within the viewport, wrap cleanly, and preserve their
+   left/right alignment at narrow and wide window sizes.
 7. Close the window and reopen from the same directory. `list` must show the
    saved tasks. Enter `bye extra`: expect an error, not exit. Enter ` bye `:
    expect a goodbye and the window to close after a short delay.
