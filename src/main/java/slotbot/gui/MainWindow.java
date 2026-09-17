@@ -9,6 +9,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
+import slotbot.BotResponse;
 import slotbot.SlotBot;
 
 /**
@@ -54,7 +55,7 @@ public class MainWindow {
         this.bot = bot;
         this.closeWindow = closeWindow;
 
-        addMessage(bot.getWelcome(), false);
+        addMessage(bot.getWelcome(), false, false);
     }
 
     /**
@@ -76,8 +77,9 @@ public class MainWindow {
             return;
         }
 
-        addMessage(input, true);
-        addMessage(bot.getResponse(input), false);
+        addMessage(input, true, false);
+        BotResponse botResponse = bot.getResponseDetails(input);
+        addMessage(botResponse.text(), false, botResponse.isError());
         userInput.clear();
 
         if (bot.isExiting()) {
@@ -97,10 +99,11 @@ public class MainWindow {
      *
      * @param text Message to display.
      * @param isUser Whether the user sent this message.
+     * @param isError Whether the message reports a command error.
      */
-    private void addMessage(String text, boolean isUser) {
+    private void addMessage(String text, boolean isUser, boolean isError) {
         String displayedText = isUser ? text : text.replaceAll("(?m)^_{60}\\R?", "").strip();
-        dialogContainer.getChildren().add(new MessageBubble(displayedText, isUser));
+        dialogContainer.getChildren().add(new MessageBubble(displayedText, isUser, isError));
 
         isPinnedToBottom = true;
         scrollToLatestMessage();

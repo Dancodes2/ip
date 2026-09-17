@@ -16,10 +16,13 @@ public class MessageBubble extends HBox {
      *
      * @param text Message to display.
      * @param isUser Whether the user sent the message.
+     * @param isError Whether the message reports a command error.
      */
-    public MessageBubble(String text, boolean isUser) {
-        Label author = createAuthorLabel(isUser);
-        Label message = createMessageLabel(text, isUser);
+    public MessageBubble(String text, boolean isUser, boolean isError) {
+        assert !isUser || !isError : "A user message cannot be an error response";
+
+        Label author = createAuthorLabel(isUser, isError);
+        Label message = createMessageLabel(text, isUser, isError);
         VBox content = new VBox(5, author, message);
 
         content.setFillWidth(true);
@@ -36,21 +39,27 @@ public class MessageBubble extends HBox {
     /**
      * Creates the label that identifies a message's sender.
      */
-    private Label createAuthorLabel(boolean isUser) {
+    private Label createAuthorLabel(boolean isUser, boolean isError) {
         Label author = new Label(isUser ? "YOU" : "SLOTBOT");
         author.getStyleClass().addAll("author", isUser ? "user-author" : "bot-author");
+        if (isError) {
+            author.getStyleClass().add("error-author");
+        }
         return author;
     }
 
     /**
      * Creates a wrapping label styled for a user or SlotBot message.
      */
-    private Label createMessageLabel(String text, boolean isUser) {
+    private Label createMessageLabel(String text, boolean isUser, boolean isError) {
         Label message = new Label(text);
         message.setWrapText(true);
         message.setMinWidth(0);
         message.setMaxWidth(Double.MAX_VALUE);
         message.getStyleClass().addAll("message-text", isUser ? "user-message" : "bot-message");
+        if (isError) {
+            message.getStyleClass().add("error-message");
+        }
         return message;
     }
 }

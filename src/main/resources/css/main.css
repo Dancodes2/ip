@@ -47,6 +47,12 @@
     -fx-background-color: #d8edf4;
     -fx-border-color: #bddce7;
 }
+.error-author { -fx-text-fill: #9a3d48; }
+.error-message {
+    -fx-background-color: #fff0f1;
+    -fx-border-color: #e3a5ac;
+    -fx-text-fill: #762b35;
+}
 .composer {
     -fx-padding: 14 22 20 22;
     -fx-background-color: #ffffff;

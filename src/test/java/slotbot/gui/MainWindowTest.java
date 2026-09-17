@@ -187,7 +187,7 @@ public class MainWindowTest {
             assertBlankInputIsIgnored(input, send, messages);
             assertTodoCanBeAdded(input, scene, messages);
             assertListCanBeDisplayed(input, send, messages);
-            assertExitInputIsValidated(input, send, bot);
+            assertExitInputIsValidated(input, send, messages, bot);
         } catch (Throwable failure) {
             stage.close();
             throw failure;
@@ -227,10 +227,14 @@ public class MainWindowTest {
         assertEquals(5, messages.getChildren().size());
     }
 
-    private static void assertExitInputIsValidated(TextField input, Button send, SlotBot bot) {
+    private static void assertExitInputIsValidated(TextField input, Button send, VBox messages, SlotBot bot) {
         input.setText("bye extra");
         send.fire();
         assertFalse(bot.isExiting());
+        HBox errorRow = (HBox) messages.getChildren().getLast();
+        VBox errorContent = (VBox) errorRow.getChildren().getFirst();
+        Label errorMessage = (Label) errorContent.getChildren().get(1);
+        assertTrue(errorMessage.getStyleClass().contains("error-message"));
 
         input.setText(" bye ");
         send.fire();

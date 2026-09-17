@@ -107,7 +107,8 @@ absolute JAR path from a fresh temporary directory.
    Expect the existing console semantics and updated task status/counts.
 5. Submit empty input and spaces: expect no message or task. Submit `todo`,
    `blah`, `mark 0`, `mark 99`, and an impossible date: expect existing error
-   messages, no crash, and no unwanted task changes.
+   messages, no crash, and no unwanted task changes. Confirm error replies use
+   the distinct error colors while valid replies retain the normal bot style.
 6. Repeat `list` until the conversation scrolls. Confirm new replies are visible
    and older messages remain reachable. While at the bottom, resize the window
    from wide to narrow so existing descriptions wrap onto more lines. The latest

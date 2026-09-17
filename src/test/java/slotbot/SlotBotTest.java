@@ -19,6 +19,14 @@ public class SlotBotTest {
     private Path directory;
 
     @Test
+    public void getResponseDetails_validAndInvalidCommands_reportsErrorStatus() {
+        SlotBot bot = new SlotBot(directory.resolve("tasks.txt"));
+
+        assertFalse(bot.getResponseDetails("todo read book").isError());
+        assertTrue(bot.getResponseDetails("todo").isError());
+    }
+
+    @Test
     public void getResponse_commandsAcrossRequests_preservesStateAndSaves() {
         Path save = directory.resolve("tasks.txt");
         SlotBot bot = new SlotBot(save);
