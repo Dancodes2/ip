@@ -146,15 +146,18 @@ public class Ui {
      * Displays tasks matching a find keyword in their filtered order.
      *
      * @param tasks Matching tasks to display.
+     * @param keyword Keyword used to find the tasks.
      */
-    public void showMatchingTasks(List<Task> tasks) {
-        output.accept("""
-                %s
-                Here are the matching tasks in your list:
-                """.formatted(SEPARATOR));
+    public void showMatchingTasks(List<Task> tasks, String keyword) {
+        showLines(SEPARATOR);
 
-        for (int i = 0; i < tasks.size(); i++) {
-            showLines((i + 1) + ". " + tasks.get(i));
+        if (tasks.isEmpty()) {
+            showLines("No tasks match \"" + keyword + "\".");
+        } else {
+            showLines("Here are the matching tasks in your list:");
+            for (int i = 0; i < tasks.size(); i++) {
+                showLines((i + 1) + ". " + tasks.get(i));
+            }
         }
 
         output.accept("""

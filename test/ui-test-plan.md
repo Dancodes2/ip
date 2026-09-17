@@ -12,8 +12,8 @@ correct task types, show the task count, handle invalid delete inputs safely,
 delete a task and renumber the list, and share task-number validation across
 mark, unmark, and delete. Verify that leading or trailing whitespace around
 `list` and `bye` is handled the same as the plain command. Verify that `find`
-displays matching task descriptions in their original order and displays no
-task rows when there are no matches.
+displays matching task descriptions in their original order and names the
+search keyword in a clear message when there are no matches.
 
 Deadline inputs use the Level 8 `yyyy-MM-dd` format and display as `MMM dd yyyy`.
 Event inputs use `yyyy-MM-dd HH:mm` and display as `MMM dd yyyy HH:mm`.

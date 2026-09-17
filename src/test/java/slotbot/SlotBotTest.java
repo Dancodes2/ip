@@ -33,7 +33,7 @@ public class SlotBotTest {
         assertTrue(bot.getResponse("unmark 1").contains("[T][ ] read book"));
 
         assertFalse(bot.getResponse("find book").contains("[E]"));
-        assertFalse(bot.getResponse("find missing").contains("[T]"));
+        assertTrue(bot.getResponse("find missing").contains("No tasks match \"missing\"."));
 
         bot.getResponse("delete 3");
         assertFalse(new SlotBot(save).getResponse("list").contains("[E]"));
