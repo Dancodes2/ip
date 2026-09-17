@@ -18,6 +18,10 @@ task rows when there are no matches.
 Deadline inputs use the Level 8 `yyyy-MM-dd` format and display as `MMM dd yyyy`.
 Event inputs use `yyyy-MM-dd HH:mm` and display as `MMM dd yyyy HH:mm`.
 Invalid deadline and event date-times should be rejected without adding tasks.
+Extra whitespace around `/by`, `/from`, and `/to` should be accepted. Repeated
+separators, task descriptions containing the storage separator `|`, and events
+whose start time is equal to or later than their end time should be rejected
+without adding tasks.
 
 The regression runner uses a fresh temporary working directory, so the case
 also verifies that a missing save file does not prevent first launch and that
@@ -35,7 +39,11 @@ event project meeting
 event project meeting /from Mon 2pm
 todo borrow book
 deadline return book /by 2019-10-15
+deadline repeated /by 2019-10-16 /by 2019-10-17
+todo unsafe | description
 event project meeting /from 2019-10-15 14:00 /to 2019-10-15 16:00
+event same time /from 2019-10-15 14:00 /to 2019-10-15 14:00
+event reversed /from 2019-10-15 16:00 /to 2019-10-15 14:00
 todo join sports club
 find book
 find missing
@@ -52,6 +60,7 @@ unmark 2
 mark abc
 unmark abc
 mark 99
+deadline spaced deadline   /by   2019-10-16
 bye
 ```
 
@@ -74,6 +83,10 @@ Starting with an empty list.
 ```text
 Warning: Ignoring invalid task data on line NUMBER.
 ```
+
+An event record whose start time is equal to or later than its end time is
+invalid. Expect SlotBot to warn about that record, skip it, and continue loading
+the other valid records.
 
 ## Case 3: JavaFX GUI (Level-10)
 

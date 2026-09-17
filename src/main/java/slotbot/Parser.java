@@ -16,6 +16,9 @@ import slotbot.task.Todo;
  * Interprets user input as SlotBot commands and task details.
  */
 public final class Parser {
+    private static final String DEADLINE_SEPARATOR_REGEX = "\\s+/by\\s+";
+    private static final String EVENT_START_SEPARATOR_REGEX = "\\s+/from\\s+";
+    private static final String EVENT_END_SEPARATOR_REGEX = "\\s+/to\\s+";
     private static final DateTimeFormatter EVENT_DATE_TIME_FORMATTER =
             DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm", Locale.ENGLISH)
                     .withResolverStyle(ResolverStyle.STRICT);
@@ -102,7 +105,9 @@ public final class Parser {
                     throw new SlotBotException("The description of a todo cannot be empty.\n"
                             + "Use: todo DESCRIPTION");
                 }
-                return new Todo(arguments[1]);
+                String description = arguments[1];
+                validateDescription(description);
+                return new Todo(description);
             }
 
             case DEADLINE: {
@@ -111,14 +116,15 @@ public final class Parser {
                             + "Use: deadline DESCRIPTION /by DATE");
                 }
 
-                String[] sentenceDeadline = arguments[1].split(" /by ", 2);
-                if (sentenceDeadline.length < 2
+                String[] sentenceDeadline = arguments[1].split(DEADLINE_SEPARATOR_REGEX, -1);
+                if (sentenceDeadline.length != 2
                         || sentenceDeadline[0].isBlank()
                         || sentenceDeadline[1].isBlank()) {
                     throw new SlotBotException("Use: deadline DESCRIPTION /by DATE");
                 }
 
                 String description = sentenceDeadline[0];
+                validateDescription(description);
                 try {
                     LocalDate by = LocalDate.parse(sentenceDeadline[1]);
                     return new Deadline(description, by);
@@ -134,16 +140,17 @@ public final class Parser {
                             + "Use: event DESCRIPTION /from START /to END");
                 }
 
-                String[] sentenceEvent = arguments[1].split(" /from ", 2);
-                if (sentenceEvent.length < 2
+                String[] sentenceEvent = arguments[1].split(EVENT_START_SEPARATOR_REGEX, -1);
+                if (sentenceEvent.length != 2
                         || sentenceEvent[0].isBlank()
                         || sentenceEvent[1].isBlank()) {
                     throw new SlotBotException("Use: event DESCRIPTION /from START /to END");
                 }
 
                 String description = sentenceEvent[0];
-                String[] datesEvent = sentenceEvent[1].split(" /to ", 2);
-                if (datesEvent.length < 2
+                validateDescription(description);
+                String[] datesEvent = sentenceEvent[1].split(EVENT_END_SEPARATOR_REGEX, -1);
+                if (datesEvent.length != 2
                         || datesEvent[0].isBlank()
                         || datesEvent[1].isBlank()) {
                     throw new SlotBotException("Use: event DESCRIPTION /from START /to END");
@@ -152,6 +159,10 @@ public final class Parser {
                 try {
                     LocalDateTime from = LocalDateTime.parse(datesEvent[0], EVENT_DATE_TIME_FORMATTER);
                     LocalDateTime to = LocalDateTime.parse(datesEvent[1], EVENT_DATE_TIME_FORMATTER);
+                    if (!from.isBefore(to)) {
+                        throw new SlotBotException("The event start time must be before its end time.\n"
+                                + "Use: event DESCRIPTION /from START /to END");
+                    }
                     return new Event(description, from, to);
                 } catch (DateTimeParseException e) {
                     throw new SlotBotException("The event times must use yyyy-MM-dd HH:mm.\n"
@@ -164,6 +175,18 @@ public final class Parser {
                         + "Try: todo DESCRIPTION, deadline DESCRIPTION /by DATE,\n"
                         + "event DESCRIPTION /from START /to END, list, mark [NUMBER],\n"
                         + "unmark [NUMBER], or bye.");
+        }
+    }
+
+    /**
+     * Checks that a task description can be saved without corrupting its record.
+     *
+     * @param description Task description to validate.
+     * @throws SlotBotException If the description contains the storage separator.
+     */
+    private static void validateDescription(String description) throws SlotBotException {
+        if (description.contains("|")) {
+            throw new SlotBotException("Task descriptions cannot contain the | character.");
         }
     }
 }

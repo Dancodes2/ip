@@ -106,6 +106,20 @@ public class StorageTest {
         assertEquals("later task", tasks.get(0).getDescription());
     }
 
+    @Test
+    public void loadTasks_eventWithReversedTimes_skipsEventAndLoadsLaterRecord(
+            @TempDir Path tempDirectory) throws IOException {
+        Path saveFilePath = writeSaveFile(tempDirectory,
+                "E | 0 | invalid event | 2026-09-18 16:00 | 2026-09-18 14:00",
+                "T | 0 | later task");
+        Storage storage = new Storage(saveFilePath, new Ui());
+
+        List<Task> tasks = storage.loadTasks();
+
+        assertEquals(1, tasks.size());
+        assertEquals("later task", tasks.get(0).getDescription());
+    }
+
     private Path writeSaveFile(Path tempDirectory, String... taskLines) throws IOException {
         Path saveFilePath = tempDirectory.resolve("data").resolve("slotbot.txt");
         Files.createDirectories(saveFilePath.getParent());
