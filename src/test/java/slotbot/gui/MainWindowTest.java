@@ -39,8 +39,12 @@ public class MainWindowTest {
 
         for (int i = 0; i < 4; i++) {
             submitLongTask(root, i);
+            resizeView(root, i > 1 ? 400 : 540);
             assertLatestReplyIsVisible(root);
         }
+
+        resizeView(root, 360);
+        assertManualScrollPositionIsPreserved(root);
     }
 
     /**
@@ -66,7 +70,6 @@ public class MainWindowTest {
         runOnFxThread(() -> {
             ScrollPane scroll = (ScrollPane) root.lookup("#scrollPane");
             scroll.setVvalue(0);
-            root.resize(submission > 1 ? 400 : 540, 420);
 
             TextField input = (TextField) root.lookup("#userInput");
             input.setText("todo " + "A long task description that wraps onto multiple lines. ".repeat(8));
@@ -76,6 +79,18 @@ public class MainWindowTest {
                 Button send = (Button) root.lookup("#sendButton");
                 send.fire();
             }
+            return null;
+        });
+    }
+
+    /**
+     * Resizes a populated view so existing messages must be laid out again.
+     */
+    private static void resizeView(Parent root, int width) throws Exception {
+        runOnFxThread(() -> {
+            root.resize(width, 420);
+            root.applyCss();
+            root.layout();
             return null;
         });
     }
@@ -100,6 +115,17 @@ public class MainWindowTest {
             assertEquals(scroll.getVmax(), scroll.getVvalue(), 0.001);
 
             scroll.setVvalue(0);
+            assertEquals(0, scroll.getVvalue(), 0.001, "Manual scrolling must remain available");
+            return null;
+        });
+    }
+
+    /**
+     * Verifies that resizing does not override a deliberate manual scroll.
+     */
+    private static void assertManualScrollPositionIsPreserved(Parent root) throws Exception {
+        runOnFxThread(() -> {
+            ScrollPane scroll = (ScrollPane) root.lookup("#scrollPane");
             assertEquals(0, scroll.getVvalue(), 0.001, "Manual scrolling must remain available");
             return null;
         });

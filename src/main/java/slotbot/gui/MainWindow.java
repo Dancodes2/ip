@@ -17,6 +17,8 @@ import slotbot.SlotBot;
  * Presents the conversation and forwards submitted commands to SlotBot.
  */
 public class MainWindow {
+    private static final double SCROLL_POSITION_TOLERANCE = 0.001;
+
     @FXML
     private ScrollPane scrollPane;
     @FXML
@@ -28,6 +30,21 @@ public class MainWindow {
 
     private SlotBot bot;
     private Runnable closeWindow;
+    private boolean isPinnedToBottom = true;
+
+    /**
+     * Keeps a conversation at the bottom when wrapping changes its height.
+     */
+    @FXML
+    private void initialize() {
+        scrollPane.vvalueProperty().addListener((observable, oldValue, newValue) ->
+                isPinnedToBottom = isScrolledToBottom());
+        dialogContainer.heightProperty().addListener((observable, oldHeight, newHeight) -> {
+            if (isPinnedToBottom) {
+                scrollToLatestMessage();
+            }
+        });
+    }
 
     /**
      * Connects the chatbot and displays its greeting and startup warnings.
@@ -100,6 +117,14 @@ public class MainWindow {
         bubble.setAlignment(isUser ? Pos.TOP_RIGHT : Pos.TOP_LEFT);
         dialogContainer.getChildren().add(bubble);
 
+        isPinnedToBottom = true;
+        scrollToLatestMessage();
+    }
+
+    /**
+     * Scrolls to the latest message after JavaFX finishes laying out the view.
+     */
+    private void scrollToLatestMessage() {
         Platform.runLater(() -> {
             // Finish the viewport and content layout before calculating the bottom position.
             Parent root = scrollPane.getScene().getRoot();
@@ -107,5 +132,13 @@ public class MainWindow {
             root.layout();
             scrollPane.setVvalue(scrollPane.getVmax());
         });
+    }
+
+    /**
+     * Returns whether the conversation is at or close to its bottom edge.
+     */
+    private boolean isScrolledToBottom() {
+        double distanceFromBottom = scrollPane.getVmax() - scrollPane.getVvalue();
+        return distanceFromBottom <= SCROLL_POSITION_TOLERANCE;
     }
 }
