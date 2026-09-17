@@ -1,7 +1,9 @@
 package slotbot.task;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
@@ -27,5 +29,21 @@ public class TaskTest {
         Task task = new Task("read book");
 
         assertEquals("read book", task.getDescription());
+    }
+
+    @Test
+    public void completionStatus_markAndUnmark_updatesStatusAndDisplay() {
+        Task task = new Task("read book");
+
+        assertFalse(task.isDone());
+        assertEquals("[ ] read book", task.toString());
+
+        task.markDone();
+        assertTrue(task.isDone());
+        assertEquals("[X] read book", task.toString());
+
+        task.markUndone();
+        assertFalse(task.isDone());
+        assertEquals("[ ] read book", task.toString());
     }
 }
