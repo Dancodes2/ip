@@ -97,84 +97,107 @@ public final class Parser {
      * @throws SlotBotException If the command or its arguments are invalid.
      */
     public static Task parseTask(String userInput, CommandType commandType) throws SlotBotException {
-        String[] arguments = userInput.trim().split("\\s+", 2);
+        String taskDetails = extractTaskDetails(userInput);
 
-        switch (commandType) {
-            case TODO: {
-                if (arguments.length < 2 || arguments[1].isBlank()) {
-                    throw new SlotBotException("The description of a todo cannot be empty.\n"
-                            + "Use: todo DESCRIPTION");
-                }
-                String description = arguments[1];
-                validateDescription(description);
-                return new Todo(description);
+        return switch (commandType) {
+            case TODO -> parseTodo(taskDetails);
+            case DEADLINE -> parseDeadline(taskDetails);
+            case EVENT -> parseEvent(taskDetails);
+            default -> throw new SlotBotException("I don't recognise that command.\n"
+                    + "Try: todo DESCRIPTION, deadline DESCRIPTION /by DATE,\n"
+                    + "event DESCRIPTION /from START /to END, list, mark [NUMBER],\n"
+                    + "unmark [NUMBER], or bye.");
+        };
+    }
+
+    /**
+     * Returns the part of a task command after its command word.
+     */
+    private static String extractTaskDetails(String userInput) {
+        String[] commandParts = userInput.trim().split("\\s+", 2);
+        return commandParts.length < 2 ? "" : commandParts[1];
+    }
+
+    /**
+     * Creates a todo from its validated description.
+     */
+    private static Todo parseTodo(String taskDetails) throws SlotBotException {
+        if (taskDetails.isBlank()) {
+            throw new SlotBotException("The description of a todo cannot be empty.\n"
+                    + "Use: todo DESCRIPTION");
+        }
+
+        validateDescription(taskDetails);
+        return new Todo(taskDetails);
+    }
+
+    /**
+     * Creates a deadline from its description and date fields.
+     */
+    private static Deadline parseDeadline(String taskDetails) throws SlotBotException {
+        if (taskDetails.isBlank()) {
+            throw new SlotBotException("The description of a deadline cannot be empty.\n"
+                    + "Use: deadline DESCRIPTION /by DATE");
+        }
+
+        String usage = "Use: deadline DESCRIPTION /by DATE";
+        String[] fields = splitRequiredFields(taskDetails, DEADLINE_SEPARATOR_REGEX, usage);
+        String description = fields[0];
+        validateDescription(description);
+
+        try {
+            LocalDate by = LocalDate.parse(fields[1]);
+            return new Deadline(description, by);
+        } catch (DateTimeParseException e) {
+            throw new SlotBotException("The deadline date must use yyyy-MM-dd.\n"
+                    + "Use: deadline DESCRIPTION /by yyyy-MM-dd");
+        }
+    }
+
+    /**
+     * Creates an event from its description and time-range fields.
+     */
+    private static Event parseEvent(String taskDetails) throws SlotBotException {
+        if (taskDetails.isBlank()) {
+            throw new SlotBotException("The description of an event cannot be empty.\n"
+                    + "Use: event DESCRIPTION /from START /to END");
+        }
+
+        String usage = "Use: event DESCRIPTION /from START /to END";
+        String[] eventFields = splitRequiredFields(taskDetails, EVENT_START_SEPARATOR_REGEX, usage);
+        String description = eventFields[0];
+        validateDescription(description);
+        String[] timeFields = splitRequiredFields(eventFields[1], EVENT_END_SEPARATOR_REGEX, usage);
+        return createEvent(description, timeFields);
+    }
+
+    /**
+     * Splits two required fields and rejects missing or repeated separators.
+     */
+    private static String[] splitRequiredFields(String text, String separatorRegex, String usage)
+            throws SlotBotException {
+        String[] fields = text.split(separatorRegex, -1);
+        if (fields.length != 2 || fields[0].isBlank() || fields[1].isBlank()) {
+            throw new SlotBotException(usage);
+        }
+        return fields;
+    }
+
+    /**
+     * Creates an event after parsing and validating its start and end times.
+     */
+    private static Event createEvent(String description, String[] timeFields) throws SlotBotException {
+        try {
+            LocalDateTime from = LocalDateTime.parse(timeFields[0], EVENT_DATE_TIME_FORMATTER);
+            LocalDateTime to = LocalDateTime.parse(timeFields[1], EVENT_DATE_TIME_FORMATTER);
+            if (!from.isBefore(to)) {
+                throw new SlotBotException("The event start time must be before its end time.\n"
+                        + "Use: event DESCRIPTION /from START /to END");
             }
-
-            case DEADLINE: {
-                if (arguments.length < 2 || arguments[1].isBlank()) {
-                    throw new SlotBotException("The description of a deadline cannot be empty.\n"
-                            + "Use: deadline DESCRIPTION /by DATE");
-                }
-
-                String[] sentenceDeadline = arguments[1].split(DEADLINE_SEPARATOR_REGEX, -1);
-                if (sentenceDeadline.length != 2
-                        || sentenceDeadline[0].isBlank()
-                        || sentenceDeadline[1].isBlank()) {
-                    throw new SlotBotException("Use: deadline DESCRIPTION /by DATE");
-                }
-
-                String description = sentenceDeadline[0];
-                validateDescription(description);
-                try {
-                    LocalDate by = LocalDate.parse(sentenceDeadline[1]);
-                    return new Deadline(description, by);
-                } catch (DateTimeParseException e) {
-                    throw new SlotBotException("The deadline date must use yyyy-MM-dd.\n"
-                            + "Use: deadline DESCRIPTION /by yyyy-MM-dd");
-                }
-            }
-
-            case EVENT: {
-                if (arguments.length < 2 || arguments[1].isBlank()) {
-                    throw new SlotBotException("The description of an event cannot be empty.\n"
-                            + "Use: event DESCRIPTION /from START /to END");
-                }
-
-                String[] sentenceEvent = arguments[1].split(EVENT_START_SEPARATOR_REGEX, -1);
-                if (sentenceEvent.length != 2
-                        || sentenceEvent[0].isBlank()
-                        || sentenceEvent[1].isBlank()) {
-                    throw new SlotBotException("Use: event DESCRIPTION /from START /to END");
-                }
-
-                String description = sentenceEvent[0];
-                validateDescription(description);
-                String[] datesEvent = sentenceEvent[1].split(EVENT_END_SEPARATOR_REGEX, -1);
-                if (datesEvent.length != 2
-                        || datesEvent[0].isBlank()
-                        || datesEvent[1].isBlank()) {
-                    throw new SlotBotException("Use: event DESCRIPTION /from START /to END");
-                }
-
-                try {
-                    LocalDateTime from = LocalDateTime.parse(datesEvent[0], EVENT_DATE_TIME_FORMATTER);
-                    LocalDateTime to = LocalDateTime.parse(datesEvent[1], EVENT_DATE_TIME_FORMATTER);
-                    if (!from.isBefore(to)) {
-                        throw new SlotBotException("The event start time must be before its end time.\n"
-                                + "Use: event DESCRIPTION /from START /to END");
-                    }
-                    return new Event(description, from, to);
-                } catch (DateTimeParseException e) {
-                    throw new SlotBotException("The event times must use yyyy-MM-dd HH:mm.\n"
-                            + "Use: event DESCRIPTION /from yyyy-MM-dd HH:mm /to yyyy-MM-dd HH:mm");
-                }
-            }
-
-            default:
-                throw new SlotBotException("I don't recognise that command.\n"
-                        + "Try: todo DESCRIPTION, deadline DESCRIPTION /by DATE,\n"
-                        + "event DESCRIPTION /from START /to END, list, mark [NUMBER],\n"
-                        + "unmark [NUMBER], or bye.");
+            return new Event(description, from, to);
+        } catch (DateTimeParseException e) {
+            throw new SlotBotException("The event times must use yyyy-MM-dd HH:mm.\n"
+                    + "Use: event DESCRIPTION /from yyyy-MM-dd HH:mm /to yyyy-MM-dd HH:mm");
         }
     }
 
