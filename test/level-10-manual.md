@@ -53,7 +53,7 @@ Expect 3 tasks in order: todo, deadline, event. Dates should display as
 | Command | Expected result |
 | --- | --- |
 | `find book` | Only read book and return book, in that order. |
-| `find missing` | Matching-task heading with no task rows. |
+| `find missing` | `No tasks match "missing".` |
 | `mark 1` | Read book shows `[T][X]`. |
 | `unmark 1` | Read book shows `[T][ ]`. |
 | `mark 3` | Study shows `[E][X]`; the last valid index works. |

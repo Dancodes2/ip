@@ -19,6 +19,14 @@ public class SlotBotTest {
     private Path directory;
 
     @Test
+    public void getResponseDetails_validAndInvalidCommands_reportsErrorStatus() {
+        SlotBot bot = new SlotBot(directory.resolve("tasks.txt"));
+
+        assertFalse(bot.getResponseDetails("todo read book").isError());
+        assertTrue(bot.getResponseDetails("todo").isError());
+    }
+
+    @Test
     public void getResponse_commandsAcrossRequests_preservesStateAndSaves() {
         Path save = directory.resolve("tasks.txt");
         SlotBot bot = new SlotBot(save);
@@ -33,7 +41,7 @@ public class SlotBotTest {
         assertTrue(bot.getResponse("unmark 1").contains("[T][ ] read book"));
 
         assertFalse(bot.getResponse("find book").contains("[E]"));
-        assertFalse(bot.getResponse("find missing").contains("[T]"));
+        assertTrue(bot.getResponse("find missing").contains("No tasks match \"missing\"."));
 
         bot.getResponse("delete 3");
         assertFalse(new SlotBot(save).getResponse("list").contains("[E]"));

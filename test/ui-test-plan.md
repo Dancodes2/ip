@@ -12,8 +12,8 @@ correct task types, show the task count, handle invalid delete inputs safely,
 delete a task and renumber the list, and share task-number validation across
 mark, unmark, and delete. Verify that leading or trailing whitespace around
 `list` and `bye` is handled the same as the plain command. Verify that `find`
-displays matching task descriptions in their original order and displays no
-task rows when there are no matches.
+displays matching task descriptions in their original order and names the
+search keyword in a clear message when there are no matches.
 
 Deadline inputs use the Level 8 `yyyy-MM-dd` format and display as `MMM dd yyyy`.
 Event inputs use `yyyy-MM-dd HH:mm` and display as `MMM dd yyyy HH:mm`.
@@ -96,6 +96,8 @@ run `java -jar build/libs/slotbot.jar`. The GUI uses the same relative
 absolute JAR path from a fresh temporary directory.
 
 1. Confirm the welcome message, command input, and Send button appear.
+   Confirm SlotBot messages are left-aligned, user messages are right-aligned,
+   and each bubble is visually distinct without occupying unnecessary width.
 2. Submit `todo read book` with Enter. Expect one user message and one reply,
    an empty input field, and focus ready for the next command.
 3. Submit `deadline return book /by 2026-09-10` using Send, then
@@ -105,7 +107,8 @@ absolute JAR path from a fresh temporary directory.
    Expect the existing console semantics and updated task status/counts.
 5. Submit empty input and spaces: expect no message or task. Submit `todo`,
    `blah`, `mark 0`, `mark 99`, and an impossible date: expect existing error
-   messages, no crash, and no unwanted task changes.
+   messages, no crash, and no unwanted task changes. Confirm error replies use
+   the distinct error colors while valid replies retain the normal bot style.
 6. Repeat `list` until the conversation scrolls. Confirm new replies are visible
    and older messages remain reachable. While at the bottom, resize the window
    from wide to narrow so existing descriptions wrap onto more lines. The latest
@@ -113,6 +116,8 @@ absolute JAR path from a fresh temporary directory.
    conversation must preserve that manual position. After Enter or Send, the
    final line must be visible without further scrolling, including when
    submitting from a scrolled-up position or a narrower window.
+   Confirm bubbles remain within the viewport, wrap cleanly, and preserve their
+   left/right alignment at narrow and wide window sizes.
 7. Close the window and reopen from the same directory. `list` must show the
    saved tasks. Enter `bye extra`: expect an error, not exit. Enter ` bye `:
    expect a goodbye and the window to close after a short delay.

@@ -112,7 +112,7 @@ public class UiTest {
         Deadline deadline = new Deadline("submit", LocalDate.of(2026, 9, 18));
 
         ui.showTaskList(new TaskList(List.of(todo, deadline)));
-        ui.showMatchingTasks(List.of(deadline));
+        ui.showMatchingTasks(List.of(deadline), "submit");
         ui.showReminders(List.of(deadline), 7);
         ui.showReminders(List.of(), 7);
 
@@ -122,6 +122,17 @@ public class UiTest {
         assertTrue(output.toString().contains("Here are the matching tasks"));
         assertTrue(output.toString().contains("Upcoming reminders"));
         assertTrue(output.toString().contains("No upcoming deadlines."));
+    }
+
+    @Test
+    public void showMatchingTasks_emptyList_showsSearchKeyword() {
+        StringBuilder output = new StringBuilder();
+        Ui ui = new Ui(output::append);
+
+        ui.showMatchingTasks(List.of(), "book");
+
+        assertTrue(output.toString().contains("No tasks match \"book\"."));
+        assertFalse(output.toString().contains("Here are the matching tasks"));
     }
 
     @Test

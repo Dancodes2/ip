@@ -20,6 +20,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -27,6 +28,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import slotbot.SlotBot;
@@ -185,7 +187,7 @@ public class MainWindowTest {
             assertBlankInputIsIgnored(input, send, messages);
             assertTodoCanBeAdded(input, scene, messages);
             assertListCanBeDisplayed(input, send, messages);
-            assertExitInputIsValidated(input, send, bot);
+            assertExitInputIsValidated(input, send, messages, bot);
         } catch (Throwable failure) {
             stage.close();
             throw failure;
@@ -206,8 +208,17 @@ public class MainWindowTest {
         assertEquals(3, messages.getChildren().size());
         assertEquals("", input.getText());
         assertEquals(input, scene.getFocusOwner());
-        VBox reply = (VBox) messages.getChildren().get(2);
-        assertTrue(((Label) reply.getChildren().get(1)).getText().contains("[T][ ] read book"));
+        HBox userRow = (HBox) messages.getChildren().get(1);
+        HBox replyRow = (HBox) messages.getChildren().get(2);
+        assertTrue(userRow.getStyleClass().contains("user-row"));
+        assertTrue(replyRow.getStyleClass().contains("bot-row"));
+        assertEquals(Pos.TOP_RIGHT, userRow.getAlignment());
+        assertEquals(Pos.TOP_LEFT, replyRow.getAlignment());
+
+        VBox replyContent = (VBox) replyRow.getChildren().getFirst();
+        Label reply = (Label) replyContent.getChildren().get(1);
+        assertTrue(reply.getText().contains("[T][ ] read book"));
+        assertTrue(reply.getStyleClass().contains("bot-message"));
     }
 
     private static void assertListCanBeDisplayed(TextField input, Button send, VBox messages) {
@@ -216,10 +227,14 @@ public class MainWindowTest {
         assertEquals(5, messages.getChildren().size());
     }
 
-    private static void assertExitInputIsValidated(TextField input, Button send, SlotBot bot) {
+    private static void assertExitInputIsValidated(TextField input, Button send, VBox messages, SlotBot bot) {
         input.setText("bye extra");
         send.fire();
         assertFalse(bot.isExiting());
+        HBox errorRow = (HBox) messages.getChildren().getLast();
+        VBox errorContent = (VBox) errorRow.getChildren().getFirst();
+        Label errorMessage = (Label) errorContent.getChildren().get(1);
+        assertTrue(errorMessage.getStyleClass().contains("error-message"));
 
         input.setText(" bye ");
         send.fire();

@@ -21,6 +21,7 @@ public class SlotBot {
     private final String welcome;
     private final Clock clock;
     private boolean isExiting;
+    private boolean isResponseError;
 
     /**
      * Creates a chatbot using the standard relative save path.
@@ -79,14 +80,26 @@ public class SlotBot {
      * @return Formatted response for this command only.
      */
     public String getResponse(String userInput) {
+        return getResponseDetails(userInput).text();
+    }
+
+    /**
+     * Processes one command and returns its text and error status.
+     * Commands received after exit do not change tasks.
+     *
+     * @param userInput Command entered by the user.
+     * @return Formatted response details for this command only.
+     */
+    public BotResponse getResponseDetails(String userInput) {
         response.setLength(0);
+        isResponseError = false;
         if (isExiting) {
             ui.showGoodbye();
         } else {
             processCommand(userInput);
         }
 
-        return response.toString();
+        return new BotResponse(response.toString(), isResponseError);
     }
 
     /**
@@ -166,7 +179,7 @@ public class SlotBot {
             storage.saveTasks(tasks);
             ui.showAddedTask(newTask, tasks.size());
         } catch (SlotBotException e) {
-            ui.showError(e.getMessage());
+            handleCommandError(e);
         }
     }
 
@@ -191,7 +204,7 @@ public class SlotBot {
             storage.saveTasks(tasks);
             ui.showTaskStatusChanged(selectedTask, shouldMark);
         } catch (SlotBotException e) {
-            ui.showError(e.getMessage());
+            handleCommandError(e);
         }
     }
 
@@ -208,7 +221,7 @@ public class SlotBot {
             storage.saveTasks(tasks);
             ui.showDeletedTask(removedTask, tasks.size());
         } catch (SlotBotException e) {
-            ui.showError(e.getMessage());
+            handleCommandError(e);
         }
     }
 
@@ -220,9 +233,17 @@ public class SlotBot {
     private void handleFind(String userInput) {
         try {
             String keyword = Parser.parseFindKeyword(userInput);
-            ui.showMatchingTasks(tasks.findMatchingTasks(keyword));
+            ui.showMatchingTasks(tasks.findMatchingTasks(keyword), keyword);
         } catch (SlotBotException e) {
-            ui.showError(e.getMessage());
+            handleCommandError(e);
         }
+    }
+
+    /**
+     * Records and displays an invalid-command response.
+     */
+    private void handleCommandError(SlotBotException exception) {
+        isResponseError = true;
+        ui.showError(exception.getMessage());
     }
 }

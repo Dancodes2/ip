@@ -8,19 +8,19 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane prefHeight="680.0" prefWidth="540.0"
+<BorderPane prefHeight="680.0" prefWidth="540.0" styleClass="app-shell"
             xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="slotbot.gui.MainWindow">
     <top>
-        <VBox spacing="5" styleClass="header">
+        <VBox spacing="6" styleClass="header">
             <Label text="SlotBot" styleClass="title"/>
-            <Label text="A little order for your day." styleClass="subtitle"/>
+            <Label text="A little order for your day" styleClass="subtitle"/>
         </VBox>
     </top>
     <center>
         <ScrollPane fx:id="scrollPane" fitToWidth="true" hbarPolicy="NEVER">
             <content>
-                <VBox fx:id="dialogContainer" spacing="18" styleClass="conversation"/>
+                <VBox fx:id="dialogContainer" spacing="16" styleClass="conversation"/>
             </content>
         </ScrollPane>
     </center>
@@ -30,8 +30,9 @@
                    wrapText="true" styleClass="hint"/>
             <HBox spacing="10">
                 <TextField fx:id="userInput" promptText="Type a command…" accessibleText="Command"
-                           onAction="#handleUserInput" HBox.hgrow="ALWAYS"/>
-                <Button fx:id="sendButton" text="Send" onAction="#handleUserInput" minWidth="72"/>
+                           onAction="#handleUserInput" HBox.hgrow="ALWAYS" styleClass="command-input"/>
+                <Button fx:id="sendButton" text="Send" onAction="#handleUserInput" minWidth="76"
+                        styleClass="send-button"/>
             </HBox>
         </VBox>
     </bottom>
