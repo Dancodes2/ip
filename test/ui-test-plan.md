@@ -106,10 +106,13 @@ absolute JAR path from a fresh temporary directory.
 5. Submit empty input and spaces: expect no message or task. Submit `todo`,
    `blah`, `mark 0`, `mark 99`, and an impossible date: expect existing error
    messages, no crash, and no unwanted task changes.
-6. Repeat `list` until the conversation scrolls. Confirm new replies are visible,
-   older messages remain reachable, and long descriptions wrap when resizing.
-   After Enter or Send, the final line must be visible without further scrolling,
-   including when submitting from a scrolled-up position or a narrower window.
+6. Repeat `list` until the conversation scrolls. Confirm new replies are visible
+   and older messages remain reachable. While at the bottom, resize the window
+   from wide to narrow so existing descriptions wrap onto more lines. The latest
+   reply must remain fully visible. Manually scroll up and resize again; the
+   conversation must preserve that manual position. After Enter or Send, the
+   final line must be visible without further scrolling, including when
+   submitting from a scrolled-up position or a narrower window.
 7. Close the window and reopen from the same directory. `list` must show the
    saved tasks. Enter `bye extra`: expect an error, not exit. Enter ` bye `:
    expect a goodbye and the window to close after a short delay.

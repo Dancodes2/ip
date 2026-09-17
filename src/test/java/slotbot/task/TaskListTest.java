@@ -3,8 +3,10 @@ package slotbot.task;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -41,6 +43,43 @@ public class TaskListTest {
         TaskList tasks = new TaskList(List.of(new Todo("read book")));
 
         assertThrows(AssertionError.class, () -> tasks.delete(-1));
+    }
+
+    @Test
+    public void addGetDeleteAndSize_validTasks_updatesList() {
+        Todo first = new Todo("first");
+        Todo second = new Todo("second");
+        TaskList tasks = new TaskList(List.of(first));
+
+        tasks.add(second);
+
+        assertEquals(2, tasks.size());
+        assertEquals(first, tasks.get(0));
+        assertEquals(second, tasks.get(1));
+        assertEquals(first, tasks.delete(0));
+        assertEquals(List.of(second), tasks.getTasks());
+    }
+
+    @Test
+    public void constructorAndGetTasks_externalChanges_doNotChangeTaskList() {
+        List<Task> initialTasks = new ArrayList<>(List.of(new Todo("first")));
+        TaskList tasks = new TaskList(initialTasks);
+        List<Task> snapshot = tasks.getTasks();
+
+        initialTasks.add(new Todo("external"));
+        tasks.add(new Todo("later"));
+
+        assertEquals(2, tasks.size());
+        assertEquals(1, snapshot.size());
+        assertThrows(UnsupportedOperationException.class, () -> snapshot.add(new Todo("blocked")));
+    }
+
+    @Test
+    public void invalidIndexes_assertionError() {
+        TaskList tasks = new TaskList(List.of(new Todo("read book")));
+
+        assertThrows(AssertionError.class, () -> tasks.get(-1));
+        assertThrows(AssertionError.class, () -> tasks.delete(1));
     }
 
     @Test
@@ -119,5 +158,25 @@ public class TaskListTest {
         TaskList tasks = new TaskList(List.of());
 
         assertThrows(AssertionError.class, () -> tasks.findUpcomingDeadlines(null, 7));
+    }
+
+    @Test
+    public void findUpcomingDeadlines_negativeWindow_assertionError() {
+        TaskList tasks = new TaskList(List.of());
+
+        assertThrows(AssertionError.class, () -> tasks.findUpcomingDeadlines(
+                LocalDate.of(2026, 9, 18), -1));
+    }
+
+    @Test
+    public void findUpcomingDeadlines_resultIsUnmodifiable() {
+        Deadline deadline = new Deadline("submit", LocalDate.of(2026, 9, 18));
+        TaskList tasks = new TaskList(List.of(deadline));
+
+        List<Deadline> reminders = tasks.findUpcomingDeadlines(LocalDate.of(2026, 9, 18), 0);
+
+        assertTrue(reminders.contains(deadline));
+        assertThrows(UnsupportedOperationException.class, () -> reminders.add(
+                new Deadline("blocked", LocalDate.of(2026, 9, 18))));
     }
 }

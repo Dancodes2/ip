@@ -17,9 +17,55 @@ import org.junit.jupiter.api.io.TempDir;
 import slotbot.task.Deadline;
 import slotbot.task.Event;
 import slotbot.task.Task;
+import slotbot.task.TaskList;
 import slotbot.task.Todo;
 
 public class StorageTest {
+
+    @Test
+    public void saveTasks_allTaskTypesAndStates_writesExpectedRecords(
+            @TempDir Path tempDirectory) throws IOException {
+        Path saveFilePath = tempDirectory.resolve("nested").resolve("tasks.txt");
+        Todo todo = new Todo("read book");
+        todo.markDone();
+        Deadline deadline = new Deadline("submit report", LocalDate.of(2026, 9, 18));
+        Event event = new Event(
+                "meeting",
+                LocalDateTime.of(2026, 9, 18, 10, 0),
+                LocalDateTime.of(2026, 9, 18, 11, 30));
+        Storage storage = new Storage(saveFilePath, new Ui());
+
+        storage.saveTasks(new TaskList(List.of(todo, deadline, event)));
+
+        assertEquals(List.of(
+                "T | 1 | read book",
+                "D | 0 | submit report | 2026-09-18",
+                "E | 0 | meeting | 2026-09-18 10:00 | 2026-09-18 11:30"),
+                Files.readAllLines(saveFilePath));
+    }
+
+    @Test
+    public void saveTasks_baseTask_writesTodoRecord(@TempDir Path tempDirectory) throws IOException {
+        Path saveFilePath = tempDirectory.resolve("tasks.txt");
+        Storage storage = new Storage(saveFilePath, new Ui());
+
+        storage.saveTasks(new TaskList(List.of(new Task("generic task"))));
+
+        assertEquals(List.of("T | 0 | generic task"), Files.readAllLines(saveFilePath));
+    }
+
+    @Test
+    public void saveTasks_unwritableLocation_reportsWarning(@TempDir Path tempDirectory)
+            throws IOException {
+        Path parentFile = tempDirectory.resolve("file");
+        Files.writeString(parentFile, "not a directory");
+        StringBuilder output = new StringBuilder();
+        Storage storage = new Storage(parentFile.resolve("tasks.txt"), new Ui(output::append));
+
+        storage.saveTasks(new TaskList(List.of(new Todo("read book"))));
+
+        assertTrue(output.toString().contains("Warning: Unable to save tasks to disk."));
+    }
 
     @Test
     public void loadTasks_missingSaveFile_returnsEmptyList(@TempDir Path tempDirectory) {
@@ -118,6 +164,40 @@ public class StorageTest {
 
         assertEquals(1, tasks.size());
         assertEquals("later task", tasks.get(0).getDescription());
+    }
+
+    @Test
+    public void loadTasks_invalidStatusesTypesAndFields_skipsInvalidRecords(
+            @TempDir Path tempDirectory) throws IOException {
+        Path saveFilePath = writeSaveFile(tempDirectory,
+                "T | 2 | invalid status",
+                "X | 0 | unknown type",
+                "T | 0",
+                "D | 0 | empty date | ",
+                "T | 0 | extra field | unexpected",
+                "T | 0 | kept");
+        StringBuilder output = new StringBuilder();
+        Storage storage = new Storage(saveFilePath, new Ui(output::append));
+
+        List<Task> tasks = storage.loadTasks();
+
+        assertEquals(1, tasks.size());
+        assertEquals("kept", tasks.get(0).getDescription());
+        for (int lineNumber = 1; lineNumber <= 5; lineNumber++) {
+            assertTrue(output.toString().contains("invalid task data on line " + lineNumber));
+        }
+    }
+
+    @Test
+    public void loadTasks_pathIsDirectory_reportsLoadError(@TempDir Path tempDirectory) {
+        StringBuilder output = new StringBuilder();
+        Storage storage = new Storage(tempDirectory, new Ui(output::append));
+
+        List<Task> tasks = storage.loadTasks();
+
+        assertTrue(tasks.isEmpty());
+        assertTrue(output.toString().contains("Warning: Unable to load saved tasks."));
+        assertTrue(output.toString().contains("Starting with an empty list."));
     }
 
     private Path writeSaveFile(Path tempDirectory, String... taskLines) throws IOException {
