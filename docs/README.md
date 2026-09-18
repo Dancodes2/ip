@@ -120,8 +120,8 @@ Enter the exact command below to save your work and close the window:
 bye
 ```
 
-Leading and trailing spaces are accepted. Extra arguments such as `bye now`
-are rejected so that SlotBot does not close unexpectedly.
+Extra arguments such as `bye now` are rejected so that SlotBot does not close
+unexpectedly.
 
 ## Troubleshooting
 
@@ -131,3 +131,15 @@ are rejected so that SlotBot does not close unexpectedly.
 - If saving fails, SlotBot keeps running and displays a warning.
 - Task descriptions cannot contain `|` because it separates fields in the save
   file.
+
+## Notes
+
+SlotBot accepts valid past dates for deadlines and events. The `reminders`
+command shows only unfinished deadlines due today or during the next seven
+days, so overdue deadlines are not included.
+
+Leading and trailing spaces around commands are accepted. Multiple spaces after
+the command word and around `/by`, `/from`, and `/to` are also accepted. The
+parameterless commands `list`, `reminders`, and `bye` reject extra arguments;
+`mark`, `unmark`, and `delete` accept only one task number. Dates and times must
+still follow the formats shown above.
