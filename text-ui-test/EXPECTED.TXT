@@ -61,7 +61,7 @@ Task descriptions cannot contain the | character.
 ____________________________________________________________
 
 ____________________________________________________________
-The deadline date must use yyyy-MM-dd.
+The deadline date is invalid.
 Use: deadline DESCRIPTION /by yyyy-MM-dd
 ____________________________________________________________
 
@@ -82,7 +82,7 @@ Use: event DESCRIPTION /from START /to END
 ____________________________________________________________
 
 ____________________________________________________________
-The event times must use yyyy-MM-dd HH:mm.
+The event date or time is invalid.
 Use: event DESCRIPTION /from yyyy-MM-dd HH:mm /to yyyy-MM-dd HH:mm
 ____________________________________________________________
 

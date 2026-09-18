@@ -149,7 +149,7 @@ public final class Parser {
             LocalDate by = LocalDate.parse(fields[1]);
             return new Deadline(description, by);
         } catch (DateTimeParseException e) {
-            throw new SlotBotException("The deadline date must use yyyy-MM-dd.\n"
+            throw new SlotBotException("The deadline date is invalid.\n"
                     + "Use: deadline DESCRIPTION /by yyyy-MM-dd");
         }
     }
@@ -196,7 +196,7 @@ public final class Parser {
             }
             return new Event(description, from, to);
         } catch (DateTimeParseException e) {
-            throw new SlotBotException("The event times must use yyyy-MM-dd HH:mm.\n"
+            throw new SlotBotException("The event date or time is invalid.\n"
                     + "Use: event DESCRIPTION /from yyyy-MM-dd HH:mm /to yyyy-MM-dd HH:mm");
         }
     }

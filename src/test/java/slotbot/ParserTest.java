@@ -147,8 +147,11 @@ public class ParserTest {
 
     @Test
     public void parseTask_invalidDeadlineDate_exceptionThrown() {
-        assertThrows(SlotBotException.class, () -> Parser.parseTask(
+        SlotBotException exception = assertThrows(SlotBotException.class, () -> Parser.parseTask(
                 "deadline submit /by 2026-02-30", CommandType.DEADLINE));
+
+        assertEquals("The deadline date is invalid.\n"
+                + "Use: deadline DESCRIPTION /by yyyy-MM-dd", exception.getMessage());
     }
 
     @Test
@@ -162,9 +165,13 @@ public class ParserTest {
 
     @Test
     public void parseTask_invalidEventDate_exceptionThrown() {
-        assertThrows(SlotBotException.class, () -> Parser.parseTask(
-                "event meeting /from 2026-02-30 10:00 /to 2026-02-30 11:00",
+        SlotBotException exception = assertThrows(SlotBotException.class, () -> Parser.parseTask(
+                "event meeting /from 2026-29-21 10:00 /to 2026-09-21 11:00",
                 CommandType.EVENT));
+
+        assertEquals("The event date or time is invalid.\n"
+                + "Use: event DESCRIPTION /from yyyy-MM-dd HH:mm /to yyyy-MM-dd HH:mm",
+                exception.getMessage());
     }
 
     @Test

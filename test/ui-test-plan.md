@@ -17,7 +17,8 @@ search keyword in a clear message when there are no matches.
 
 Deadline inputs use the Level 8 `yyyy-MM-dd` format and display as `MMM dd yyyy`.
 Event inputs use `yyyy-MM-dd HH:mm` and display as `MMM dd yyyy HH:mm`.
-Invalid deadline and event date-times should be rejected without adding tasks.
+Invalid deadline and event date-times should be rejected with a clear invalid
+date or time message and without adding tasks.
 Extra whitespace around `/by`, `/from`, and `/to` should be accepted. Repeated
 separators, task descriptions containing the storage separator `|`, and events
 whose start time is equal to or later than their end time should be rejected
@@ -106,9 +107,10 @@ absolute JAR path from a fresh temporary directory.
 4. Run `list`, `find book`, `find missing`, `mark 1`, `unmark 1`, and `delete 3`.
    Expect the existing console semantics and updated task status/counts.
 5. Submit empty input and spaces: expect no message or task. Submit `todo`,
-   `blah`, `mark 0`, `mark 99`, and an impossible date: expect existing error
-   messages, no crash, and no unwanted task changes. Confirm error replies use
-   the distinct error colors while valid replies retain the normal bot style.
+   `blah`, `mark 0`, `mark 99`, and an impossible date: expect a specific error
+   identifying the invalid date or time, no crash, and no unwanted task changes.
+   Confirm error replies use the distinct error colors while valid replies
+   retain the normal bot style.
 6. Repeat `list` until the conversation scrolls. Confirm new replies are visible
    and older messages remain reachable. While at the bottom, resize the window
    from wide to narrow so existing descriptions wrap onto more lines. The latest
