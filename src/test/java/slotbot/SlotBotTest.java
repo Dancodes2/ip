@@ -140,6 +140,24 @@ public class SlotBotTest {
     }
 
     @Test
+    public void getResponse_unknownCommand_guidanceListsAllCommands() {
+        SlotBot bot = new SlotBot(directory.resolve("tasks.txt"));
+
+        String response = bot.getResponse("unknown");
+
+        assertTrue(response.contains("todo DESCRIPTION"));
+        assertTrue(response.contains("deadline DESCRIPTION /by DATE"));
+        assertTrue(response.contains("event DESCRIPTION /from START /to END"));
+        assertTrue(response.contains("list"));
+        assertTrue(response.contains("find KEYWORD"));
+        assertTrue(response.contains("reminders"));
+        assertTrue(response.contains("mark [NUMBER]"));
+        assertTrue(response.contains("unmark [NUMBER]"));
+        assertTrue(response.contains("delete [NUMBER]"));
+        assertTrue(response.contains("bye"));
+    }
+
+    @Test
     public void getResponse_duplicateTasks_addsBothTasks() {
         SlotBot bot = new SlotBot(directory.resolve("tasks.txt"));
 

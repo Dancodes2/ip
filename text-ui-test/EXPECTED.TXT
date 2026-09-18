@@ -14,8 +14,9 @@ ____________________________________________________________
 ____________________________________________________________
 I don't recognise that command.
 Try: todo DESCRIPTION, deadline DESCRIPTION /by DATE,
-event DESCRIPTION /from START /to END, list, mark [NUMBER],
-unmark [NUMBER], or bye.
+event DESCRIPTION /from START /to END, list, find KEYWORD,
+reminders, mark [NUMBER], unmark [NUMBER], delete [NUMBER],
+or bye.
 ____________________________________________________________
 
 ____________________________________________________________

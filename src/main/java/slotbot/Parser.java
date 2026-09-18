@@ -105,8 +105,9 @@ public final class Parser {
             case EVENT -> parseEvent(taskDetails);
             default -> throw new SlotBotException("I don't recognise that command.\n"
                     + "Try: todo DESCRIPTION, deadline DESCRIPTION /by DATE,\n"
-                    + "event DESCRIPTION /from START /to END, list, mark [NUMBER],\n"
-                    + "unmark [NUMBER], or bye.");
+                    + "event DESCRIPTION /from START /to END, list, find KEYWORD,\n"
+                    + "reminders, mark [NUMBER], unmark [NUMBER], delete [NUMBER],\n"
+                    + "or bye.");
         };
     }
 

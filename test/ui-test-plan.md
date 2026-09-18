@@ -7,7 +7,9 @@ stored in `text-ui-test/input.txt`.
 ## Case 1: Add each task type and handle basic errors
 
 Aim: Verify that invalid todo, deadline, event, and unknown commands show
-specific errors without adding tasks, while valid task commands create the
+specific errors without adding tasks. The unknown-command guidance should list
+every supported command, including `find`, `reminders`, and `delete`, so users
+can recover without consulting another source. Valid task commands should create the
 correct task types, show the task count, handle invalid delete inputs safely,
 delete a task and renumber the list, and share task-number validation across
 mark, unmark, and delete. Verify that leading or trailing whitespace around
