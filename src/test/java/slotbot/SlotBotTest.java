@@ -48,6 +48,18 @@ public class SlotBotTest {
     }
 
     @Test
+    public void getResponse_findMatchingTask_preservesListNumber() {
+        SlotBot bot = new SlotBot(directory.resolve("tasks.txt"));
+        bot.getResponse("todo read book");
+        bot.getResponse("todo project meeting");
+
+        String response = bot.getResponse("find meeting");
+
+        assertTrue(response.contains("2. [T][ ] project meeting"));
+        assertFalse(response.contains("1. [T][ ] project meeting"));
+    }
+
+    @Test
     public void getResponse_invalidCommands_doesNotChangeTasksOrRepeatReplies() {
         SlotBot bot = new SlotBot(directory.resolve("tasks.txt"));
         bot.getResponse("todo read book");

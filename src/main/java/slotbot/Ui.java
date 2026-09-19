@@ -143,20 +143,22 @@ public class Ui {
     }
 
     /**
-     * Displays tasks matching a find keyword in their filtered order.
+     * Displays matching tasks with their indexes from the complete task list.
      *
-     * @param tasks Matching tasks to display.
+     * @param tasks Complete task list.
+     * @param matchingTaskIndexes Zero-based indexes of matching tasks.
      * @param keyword Keyword used to find the tasks.
      */
-    public void showMatchingTasks(List<Task> tasks, String keyword) {
+    public void showMatchingTasks(TaskList tasks, List<Integer> matchingTaskIndexes,
+            String keyword) {
         showLines(SEPARATOR);
 
-        if (tasks.isEmpty()) {
+        if (matchingTaskIndexes.isEmpty()) {
             showLines("No tasks match \"" + keyword + "\".");
         } else {
             showLines("Here are the matching tasks in your list:");
-            for (int i = 0; i < tasks.size(); i++) {
-                showLines((i + 1) + ". " + tasks.get(i));
+            for (int taskIndex : matchingTaskIndexes) {
+                showLines((taskIndex + 1) + ". " + tasks.get(taskIndex));
             }
         }
 

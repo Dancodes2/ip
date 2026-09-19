@@ -233,7 +233,7 @@ public class SlotBot {
     private void handleFind(String userInput) {
         try {
             String keyword = Parser.parseFindKeyword(userInput);
-            ui.showMatchingTasks(tasks.findMatchingTasks(keyword), keyword);
+            ui.showMatchingTasks(tasks, tasks.findMatchingTaskIndexes(keyword), keyword);
         } catch (SlotBotException e) {
             handleCommandError(e);
         }

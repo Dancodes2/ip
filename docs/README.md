@@ -35,9 +35,9 @@ where it is launched. Reopening SlotBot from the same folder restores them.
 | Delete a task | `delete NUMBER` |
 | Exit SlotBot | `bye` |
 
-`DESCRIPTION` and `KEYWORD` may contain spaces. Task numbers come from `list`
-or `find` results and start at 1. Dates and times must exist on the calendar;
-for an event, the start must be earlier than the end.
+`DESCRIPTION` and `KEYWORD` may contain spaces. Task numbers start at 1, and
+`find` preserves the numbers shown by `list`. Dates and times must exist on the
+calendar; for an event, the start must be earlier than the end.
 
 ## Add tasks
 
@@ -82,8 +82,10 @@ Find tasks whose descriptions contain a keyword:
 find report
 ```
 
-Searches are case-sensitive. When nothing matches, SlotBot reports the searched
-keyword instead of displaying an empty list.
+Searches are case-sensitive. Matching tasks retain their numbers from `list`,
+so those numbers can be used directly with `mark`, `unmark`, and `delete`.
+When nothing matches, SlotBot reports the searched keyword instead of
+displaying an empty list.
 
 Show unfinished deadlines due today or during the next seven days:
 
@@ -96,7 +98,7 @@ in due-date order.
 
 ## Update tasks
 
-Use the number shown by `list` to mark or unmark a task:
+Use the number shown by `list` or `find` to mark or unmark a task:
 
 ```text
 mark 2
