@@ -111,8 +111,9 @@ public class UiTest {
         Todo todo = new Todo("read book");
         Deadline deadline = new Deadline("submit", LocalDate.of(2026, 9, 18));
 
-        ui.showTaskList(new TaskList(List.of(todo, deadline)));
-        ui.showMatchingTasks(List.of(deadline), "submit");
+        TaskList tasks = new TaskList(List.of(todo, deadline));
+        ui.showTaskList(tasks);
+        ui.showMatchingTasks(tasks, List.of(1), "submit");
         ui.showReminders(List.of(deadline), 7);
         ui.showReminders(List.of(), 7);
 
@@ -129,7 +130,7 @@ public class UiTest {
         StringBuilder output = new StringBuilder();
         Ui ui = new Ui(output::append);
 
-        ui.showMatchingTasks(List.of(), "book");
+        ui.showMatchingTasks(new TaskList(List.of()), List.of(), "book");
 
         assertTrue(output.toString().contains("No tasks match \"book\"."));
         assertFalse(output.toString().contains("Here are the matching tasks"));

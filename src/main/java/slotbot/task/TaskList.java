@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.IntStream;
 
 /**
  * Manages SlotBot's collection of tasks.
@@ -77,14 +78,17 @@ public class TaskList {
     }
 
     /**
-     * Returns tasks whose descriptions contain the given keyword.
+     * Returns the indexes of tasks whose descriptions contain the given keyword.
      *
      * @param keyword Case-sensitive text to search for.
-     * @return Matching tasks in their original order as an unmodifiable list.
+     * @return Matching zero-based indexes in their original order.
      */
-    public List<Task> findMatchingTasks(String keyword) {
-        return tasks.stream()
-                .filter(task -> task.getDescription().contains(keyword))
+    public List<Integer> findMatchingTaskIndexes(String keyword) {
+        assert keyword != null : "Search keyword must not be null";
+
+        return IntStream.range(0, tasks.size())
+                .filter(index -> tasks.get(index).getDescription().contains(keyword))
+                .boxed()
                 .toList();
     }
 
